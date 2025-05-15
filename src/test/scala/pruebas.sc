@@ -1,6 +1,7 @@
 import Oraculo.*
 import ReconstCadenas.*
 import scala.util.Random
+import org.scalameter.*
 
 /*Crear una secuencia aleatoria de tamano i, solo cambiar
   el rango para hacer una secuencia mas larga */
@@ -11,6 +12,7 @@ val pruebaOraculo: Oraculo = crearOraculo(0)(pruebaSecuencia)
 
 //Pruebas
 reconstruirCadenaIngenuo(pruebaSecuencia.length, pruebaOraculo)
+measure{reconstruirCadenaIngenuo(pruebaSecuencia.length, pruebaOraculo)}
 
 
 
