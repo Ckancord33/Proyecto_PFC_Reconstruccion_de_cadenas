@@ -11,12 +11,29 @@ package object ReconstCadenas {
         for {
           combinacion <- cadenasDeTamanoN(j - 1)
           letra <- alfabeto
-        } yield Seq(letra) ++ combinacion
+        } yield combinacion ++ Seq(letra)
       } else {
         LazyList(Seq())
       }
     }
     cadenasDeTamanoN(n).find(o).getOrElse(Seq())
+  }
+
+  def reconstruirCadenaIngenuoV2(n: Int, o: Oraculo): Seq[Char] = {
+    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
+    // y devuelve la secuencia reconstruida
+    def cadenasDeTamanoN(tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
+      if(tamano == n) combParcial
+      else {
+        val nuevaCombParcial = for{
+          letra <- LazyList.from(alfabeto)
+          comb <- combParcial
+        }yield comb ++ Seq(letra)
+        cadenasDeTamanoN(tamano + 1, nuevaCombParcial)
+      }
+    }
+
+    cadenasDeTamanoN(0, LazyList(Seq())).find(o).getOrElse(Seq())
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
