@@ -26,13 +26,12 @@ package object ReconstCadenas {
       if(tamano == n) combParcial
       else {
         val nuevaCombParcial = for{
-          letra <- LazyList.from(alfabeto)
           comb <- combParcial
+          letra <- alfabeto
         }yield comb ++ Seq(letra)
         cadenasDeTamanoN(tamano + 1, nuevaCombParcial)
       }
     }
-
     cadenasDeTamanoN(0, LazyList(Seq())).find(o).getOrElse(Seq())
   }
 
