@@ -58,7 +58,7 @@ assert(pertenece(Seq('x'), arbol5))                  // true
 assert(!pertenece(Seq('a', 'b', 'd', 'e'), arbol5))  // false
 assert(!pertenece(Seq('z', 'z'), arbol5))            // false, arbolDePrueba2)
 
-val arbolS = arbolDeSufijos(Seq(Seq('a','c','a','c'), Seq('c','a','c','t')))
+val arbolS = arbolDeSufijos(Seq(Seq('c','a','c','t'), Seq('a','c','a','c')))
 pertenece(Seq('c','t'), arbolS)
 
 val t = Nodo(' ', false, List(
@@ -81,4 +81,15 @@ val t = Nodo(' ', false, List(
   Hoja('t', true)
 ))
 
-t == arbolS
+t == arbolS //No quedan iguales nomas porque se organizan distinto
+
+adicionar("hola".toSeq, Nodo(' ', false, Nil))
+
+val arbol10 = arbolDeSufijos(Seq("hola".toSeq, "mundo".toSeq))
+// Sufijos esperados: "hola", "ola", "la", "a", "mundo", "undo", "ndo", "do", "o"
+assert(pertenece("hola".toSeq, arbol10))
+assert(pertenece("mundo".toSeq, arbol10))
+assert(pertenece("ndo".toSeq, arbol10))
+assert(pertenece("o".toSeq, arbol10))
+assert(!pertenece("ho".toSeq, arbol10))
+assert(!pertenece("mun".toSeq, arbol10))

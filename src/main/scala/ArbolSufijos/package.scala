@@ -46,7 +46,7 @@ package object ArbolSufijos {
         case Nodo(car, marcada, hijos) => Nodo(car, true, hijos)
         case Hoja(car, marcada) => Hoja(car, true)
       }
-      case x :: xs =>
+      case x +: xs =>
         if (!cabezas(t).contains(x)){
           t match
             case Nodo(car, marcada, hijos) => Nodo(car, marcada, adicionar(xs, Hoja(x, false)) :: hijos)
@@ -70,7 +70,7 @@ package object ArbolSufijos {
     // Dada una secuencia no vacía de secuencias, devuelve el árbol de sufijos asociado a esas secuencias
     def agregarSufijos(s: Seq[Char], t: Trie): Trie = s match {
       case Nil => t
-      case x +: xs => agregarSufijos(xs, adicionar(x +: xs, t))
+      case x +: xs => agregarSufijos(xs, adicionar(s, t))
     }
     def crearArbolDeSufijos(ss: Seq[Seq[Char]], t: Trie): Trie = ss match {
       case Nil => t
