@@ -18,7 +18,7 @@ reconstruirCadenaIngenuoV2(pruebaSecuencia.length, pruebaOraculo)
 //compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoV2) (pruebaSecuencia.length, pruebaOraculo)
 
 // Árbol base de prueba
-val arbolDePrueba: Trie = Nodo('∅', false, List(
+val arbolDePrueba: Trie = Nodo(' ', false, List(
   Nodo('a', false, List(
     Hoja('b', true),
     Hoja('c', true)
@@ -57,3 +57,28 @@ assert(pertenece(Seq('a', 'b'), arbol5))             // true
 assert(pertenece(Seq('x'), arbol5))                  // true
 assert(!pertenece(Seq('a', 'b', 'd', 'e'), arbol5))  // false
 assert(!pertenece(Seq('z', 'z'), arbol5))            // false, arbolDePrueba2)
+
+val arbolS = arbolDeSufijos(Seq(Seq('a','c','a','c'), Seq('c','a','c','t')))
+pertenece(Seq('c','t'), arbolS)
+
+val t = Nodo(' ', false, List(
+  Nodo('a', false, List(
+    Nodo('c', true, List(
+      Nodo('a', false, List(
+        Hoja('c', true)
+      )),
+      Hoja('t', true)
+    ))
+  )),
+  Nodo('c', true, List(
+    Nodo('a', false, List(
+      Nodo('c', true, List(
+        Hoja('t', true)
+      ))
+    )),
+    Hoja('t', true)
+  )),
+  Hoja('t', true)
+))
+
+t == arbolS

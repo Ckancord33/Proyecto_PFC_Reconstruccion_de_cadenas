@@ -68,6 +68,14 @@ package object ArbolSufijos {
 
   def arbolDeSufijos(ss: Seq[Seq[Char]]): Trie = {
     // Dada una secuencia no vacía de secuencias, devuelve el árbol de sufijos asociado a esas secuencias
-    ???
+    def agregarSufijos(s: Seq[Char], t: Trie): Trie = s match {
+      case Nil => t
+      case x +: xs => agregarSufijos(xs, adicionar(x +: xs, t))
+    }
+    def crearArbolDeSufijos(ss: Seq[Seq[Char]], t: Trie): Trie = ss match {
+      case Nil => t
+      case x +: xs => crearArbolDeSufijos(xs, agregarSufijos(x, t))
+    }
+    crearArbolDeSufijos(ss, Nodo(' ', false, Nil))
   }
 }
