@@ -1,5 +1,6 @@
 import common.*
-
+import java.util.concurrent._
+import scala.util.DynamicVariable
 import scala.collection.parallel.CollectionConverters.*
 import Oraculo.*
 import ArbolSufijos.*
@@ -7,41 +8,31 @@ import ArbolSufijos.*
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
   // Ahora versiones paralelas
-
+  
   def reconstruirCadenaIngenuoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
     // y devuelve la secuencia reconstruida
     // Usa paralelismo de tareas
-    def cadenasDeTamanoN(tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
-      if (tamano == n) combParcial
+    def cadenasDeTamanoN(contador: Int, tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
+      if (contador == tamano) combParcial
       else {
         val nuevaCombParcial = for {
           comb <- combParcial
           letra <- alfabeto
         } yield comb :+ letra
-        cadenasDeTamanoN(tamano + 1, nuevaCombParcial)
+        cadenasDeTamanoN(contador + 1, tamano, nuevaCombParcial)
       }
     }
-    val mitad = alfabeto.size / 2
-    val (primerMitad, segundaMitad) = alfabeto.splitAt(mitad)
 
-    def explorarConPrefijos(prefijos: Seq[Char]): Option[Seq[Char]] = {
-      val combinaciones = for {
-        letra <- prefijos.to(LazyList)
-      } yield LazyList(Seq(letra))
+    val base = cadenasDeTamanoN(0, umbral, LazyList(Seq()))
+    val tareas = (for{
+      comb <- base
+    }yield task{cadenasDeTamanoN(umbral, n, LazyList(comb)).find(o)}).toList
 
-      combinaciones
-        .flatMap(pref => cadenasDeTamanoN(1, pref))
-        .find(o)
+    def buscar(tareas: List[ForkJoinTask[Option[Seq[Char]]]]): Seq[Char] = tareas match{
+      case x :: xs => x.join().getOrElse(buscar(xs))
     }
-
-    val t1 = task {
-      explorarConPrefijos(primerMitad)
-    }
-    val t2 = task {
-      explorarConPrefijos(segundaMitad)
-    }
-    t1.join().getOrElse(t2.join().getOrElse(Seq()))
+    buscar(tareas)
   }
 
   def reconstruirCadenaMejoradoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
