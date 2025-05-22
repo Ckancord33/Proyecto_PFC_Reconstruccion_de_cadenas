@@ -2,21 +2,21 @@ import ArbolSufijos._
 import Oraculo._
 
 package object ReconstCadenas {
-
+  
   def reconstruirCadenaIngenuo(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
     // y devuelve la secuencia reconstruida
-    def cadenasDeTamanoN(j: Int): LazyList[Seq[Char]] = {
-      if (j > 0) {
-        for {
-          combinacion <- cadenasDeTamanoN(j - 1)
+    def cadenasDeTamanoN(contador: Int, tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
+      if (contador == tamano) combParcial
+      else {
+        val nuevaCombParcial = for {
+          comb <- combParcial
           letra <- alfabeto
-        } yield Seq(letra) ++ combinacion
-      } else {
-        LazyList(Seq())
+        } yield comb :+ letra
+        cadenasDeTamanoN(contador + 1, tamano, nuevaCombParcial)
       }
     }
-    cadenasDeTamanoN(n).find(o).getOrElse(Seq())
+    cadenasDeTamanoN(0, n, LazyList(Seq())).find(o).getOrElse(Seq())
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
