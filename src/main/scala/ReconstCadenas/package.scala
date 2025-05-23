@@ -20,11 +20,32 @@ package object ReconstCadenas {
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    ???
+
+    def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+      if (k > n) Seq.empty  // caso base: no lo encontró (no debería suceder) cadena vacia 
+      else {
+        // 1) extender cada candidato con cada letra
+        val ext = for {
+          prefijo <- candidatos
+          c       <- alfabeto
+        } yield prefijo :+ c
+
+        // 2) filtrar con el oráculo
+        val filtrados = ext.filter(o)
+
+        // 3) si alguno ya tiene longitud n, devolverlo
+        val completos = filtrados.filter(_.length == n)
+        if (completos.nonEmpty) completos.head
+        else
+          // 4) seguir con k+1 y los nuevos candidatos
+          construirCandidatos(k + 1, filtrados)
+      }
+    }
+
+    // arrancamos con k = 1 y SC₀ = Seq(Seq.empty)
+    construirCandidatos(1, Seq(Seq.empty))
   }
+
 
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
