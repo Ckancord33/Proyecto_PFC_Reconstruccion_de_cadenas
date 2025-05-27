@@ -41,19 +41,26 @@ package object ReconstCadenasPar {
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     // Usa paralelismo de tareas y de datos según el tamaño del conjunto
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
-      if (k > n) Seq.empty // no encontrado (no debería pasar)
+      if (k > n) Seq.empty
       else {
-        // 1) Generar todas las extensiones
+        // 1) Generar extensiones
         val ext: Seq[Seq[Char]] =
           if (candidatos.size * alfabeto.size <= umbral) {
+            // pocos candidatos → normal
             for {
               prefijo <- candidatos
               c <- alfabeto
             } yield prefijo :+ c
           } else {
-            candidatos.par
-              .flatMap(prefijo => alfabeto.map(c => prefijo :+ c))
-              .toList
+            // muchos candidatos → dividir en dos tareas
+            val (izq, der) = candidatos.splitAt(candidatos.size / 2)
+            val tIzq = task {
+              for {p <- izq; c <- alfabeto} yield p :+ c
+            }
+            val tDer = task {
+              for {p <- der; c <- alfabeto} yield p :+ c
+            }
+            tIzq.join() ++ tDer.join()
           }
 
         // 2) Filtrar con el oráculo
@@ -61,16 +68,21 @@ package object ReconstCadenasPar {
           if (ext.size <= umbral) {
             ext.filter(o)
           } else {
-            ext.par
-              .filter(o)
-              .toList
+            val (l2, r2) = ext.splitAt(ext.size / 2)
+            val f1 = task {
+              l2.filter(o)
+            }
+            val f2 = task {
+              r2.filter(o)
+            }
+            f1.join() ++ f2.join()
           }
 
-        // 3) Si alguno ya tiene longitud n, devolverlo
-        val completados = filtrados.filter(_.length == n)
-        if (completados.nonEmpty) completados.head
+        // 3) Devolver solución si ya alcanzó longitud n
+        val completos = filtrados.filter(_.length == n)
+        if (completos.nonEmpty) completos.head
         else
-          // 4) Continuar con la siguiente longitud
+          // 4) Siguiente nivel k+1
           construirCandidatos(k + 1, filtrados)
       }
     }
@@ -78,6 +90,7 @@ package object ReconstCadenasPar {
     // inicio con SC₀ = Seq(Seq.empty)
     construirCandidatos(1, Seq(Seq.empty))
   }
+
 
   def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia

@@ -20,7 +20,9 @@ package object ReconstCadenas {
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
-
+    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
+    // y devuelve la secuencia reconstruida
+    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
       if (k > n) Seq.empty  // caso base: no lo encontró (no debería suceder) cadena vacia 
       else {
