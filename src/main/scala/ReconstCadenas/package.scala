@@ -48,11 +48,30 @@ package object ReconstCadenas {
 
 
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    ???
+    // Verificamos que n sea potencia de 2 (requisito del algoritmo turbo)
+  require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+
+  @annotation.tailrec
+  def iterar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+    if (k == n) candidatos.find(_.length == n).getOrElse(Seq.empty)
+    else {
+      val combinaciones = candidatos.flatMap { s1 =>
+        candidatos.collect {
+          case s2 if (s1 ++ s2).length == k*2 => s1 ++ s2
+        }
+      }.distinct
+
+      val validas = combinaciones.filter(o)
+
+      if (validas.exists(_.length == n)) validas.find(_.length == n).get
+      else iterar(k * 2, validas)
+    }
   }
+
+  val iniciales = alfabeto.view.map(Seq(_)).filter(o).toSeq
+  if (n == 1) iniciales.find(_.length == 1).getOrElse(Seq.empty)
+  else iterar(1, iniciales)
+}
 
   def reconstruirCadenaTurboMejorada(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
