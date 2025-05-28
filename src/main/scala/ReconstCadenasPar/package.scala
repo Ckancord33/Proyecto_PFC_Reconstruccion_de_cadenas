@@ -83,63 +83,38 @@ package object ReconstCadenasPar {
 def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
   require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
-  @annotation.tailrec
-  def iterar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
-    if (k == n) {
-      // Versión paralela de find para grandes conjuntos
-      if (candidatos.size > umbral) {
-        candidatos.par.find(_.length == n).getOrElse(Seq.empty)
-      } else {
-        candidatos.find(_.length == n).getOrElse(Seq.empty)
-      }
-    } else {
+  def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+    if (k == n) candidatos.headOption.getOrElse(Seq())
+    else {
       // Decidir si paralelizar basado en el umbral
-      val combinaciones = if (candidatos.size > umbral) {
+      val combinaciones = if (k <= umbral) {
         val parCandidatos = candidatos.par
         parCandidatos.flatMap { s1 =>
-          parCandidatos.collect {
-            case s2 if (s1 ++ s2).length == k*2 => s1 ++ s2
+          parCandidatos.map {
+            s2 => s1 ++ s2
           }
-        }.distinct.seq
+        }.seq
       } else {
         candidatos.flatMap { s1 =>
           candidatos.collect {
-            case s2 if (s1 ++ s2).length == k*2 => s1 ++ s2
+            s2 => s1 ++ s2
           }
-        }.distinct
+        }
       }
 
       // Filtrado paralelo para grandes conjuntos
-      val validas = if (combinaciones.size > umbral) {
+      val validas = if (k * 2 <= umbral) {
         combinaciones.par.filter(o).seq
       } else {
         combinaciones.filter(o)
       }
 
       // Verificación paralela de existencia
-      if (validas.size > umbral) {
-        if (validas.par.exists(_.length == n)) validas.par.find(_.length == n).get
-        else iterar(k * 2, validas)
-      } else {
-        if (validas.exists(_.length == n)) validas.find(_.length == n).get
-        else iterar(k * 2, validas)
-      }
+      construirCandidatos(k*2, validas)
     }
   }
-
-  // Generación inicial paralela para alfabetos grandes
-  val iniciales = if (alfabeto.size > umbral) {
-    alfabeto.par.map(Seq(_)).filter(o).seq
-  } else {
-    alfabeto.view.map(Seq(_)).filter(o).toSeq
-  }
-
-  if (n == 1) {
-    if (iniciales.size > umbral) iniciales.par.find(_.length == 1).getOrElse(Seq.empty)
-    else iniciales.find(_.length == 1).getOrElse(Seq.empty)
-  } else {
-    iterar(1, iniciales)
-  }
+  val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+  construirCandidatos(1, iniciales)
 }
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
