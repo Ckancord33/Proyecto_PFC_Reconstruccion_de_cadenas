@@ -47,11 +47,11 @@ package object ReconstCadenasPar {
         // 1) Generar todas las extensiones
         val ext: Seq[Seq[Char]] =
           if (candidatos.size * alfabeto.size <= umbral) {
-            for {
-              prefijo <- candidatos
-              c <- alfabeto
-            } yield prefijo :+ c
+            candidatos.flatMap(prefijo =>
+              alfabeto.map(c => prefijo :+ c)
+            )
           } else {
+            // paralelismo de datos para conjuntos grandes
             candidatos.par
               .flatMap(prefijo => alfabeto.map(c => prefijo :+ c))
               .toList
