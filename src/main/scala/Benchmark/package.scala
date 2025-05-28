@@ -15,14 +15,14 @@ package object Benchmark {
   def compararAlgoritmos(a1:AlgoritmoIngenuo, a2:AlgoritmoIngenuo)
                         (tamano: Int, oraculo: Oraculo):(Double,Double, Double) = {
     val timeA1 = config(
-      KeyValue(Key.exec.minWarmupRuns -> 2),
-      KeyValue(Key.exec.maxWarmupRuns -> 4),
+      KeyValue(Key.exec.minWarmupRuns -> 1),
+      KeyValue(Key.exec.maxWarmupRuns -> 2),
       KeyValue(Key.verbose -> false)
     ) withWarmer(new Warmer.Default) measure (a1(tamano,oraculo))
 
     val timeA2 = config(
-      KeyValue(Key.exec.minWarmupRuns -> 2),
-      KeyValue(Key.exec.maxWarmupRuns -> 4),
+      KeyValue(Key.exec.minWarmupRuns -> 1),
+      KeyValue(Key.exec.maxWarmupRuns -> 2),
       KeyValue(Key.verbose -> false)
     ) withWarmer(new Warmer.Default) measure (a2(tamano,oraculo))
 

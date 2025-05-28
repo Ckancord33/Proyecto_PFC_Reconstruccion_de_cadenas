@@ -4,6 +4,7 @@ import scala.util.DynamicVariable
 import scala.collection.parallel.CollectionConverters._
 import Oraculo.*
 import ArbolSufijos.*
+import scala.collection.parallel.ParSeq
 
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
@@ -46,11 +47,11 @@ package object ReconstCadenasPar {
         // 1) Generar todas las extensiones
         val ext: Seq[Seq[Char]] =
           if (candidatos.size * alfabeto.size <= umbral) {
-            for {
-              prefijo <- candidatos
-              c <- alfabeto
-            } yield prefijo :+ c
+            candidatos.flatMap(prefijo =>
+              alfabeto.map(c => prefijo :+ c)
+            )
           } else {
+            // paralelismo de datos para conjuntos grandes
             candidatos.par
               .flatMap(prefijo => alfabeto.map(c => prefijo :+ c))
               .toList
@@ -79,13 +80,42 @@ package object ReconstCadenasPar {
     construirCandidatos(1, Seq(Seq.empty))
   }
 
-  def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa paralelismo de tareas y/o datos
-    ???
+def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
+  require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+
+  def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+    if (k == n) candidatos.headOption.getOrElse(Seq())
+    else {
+      // Decidir si paralelizar basado en el umbral
+      val combinaciones = if (k <= umbral) {
+        val parCandidatos = candidatos.par
+        parCandidatos.flatMap { s1 =>
+          parCandidatos.map {
+            s2 => s1 ++ s2
+          }
+        }.seq
+      } else {
+        candidatos.flatMap { s1 =>
+          candidatos.collect {
+            s2 => s1 ++ s2
+          }
+        }
+      }
+
+      // Filtrado paralelo para grandes conjuntos
+      val validas = if (k * 2 <= umbral) {
+        combinaciones.par.filter(o).seq
+      } else {
+        combinaciones.filter(o)
+      }
+
+      // Verificación paralela de existencia
+      construirCandidatos(k*2, validas)
+    }
   }
+  val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+  construirCandidatos(1, iniciales)
+}
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia

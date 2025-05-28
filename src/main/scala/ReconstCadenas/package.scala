@@ -20,7 +20,9 @@ package object ReconstCadenas {
   }
 
   def reconstruirCadenaMejorado(n: Int, o: Oraculo): Seq[Char] = {
-
+    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
+    // y devuelve la secuencia reconstruida
+    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
       if (k > n) Seq.empty  // caso base: no lo encontró (no debería suceder) cadena vacia 
       else {
@@ -48,10 +50,23 @@ package object ReconstCadenas {
 
 
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    ???
+      // Verificamos que n sea potencia de 2 (requisito del algoritmo turbo)
+    require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+  
+    def iterar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+      if (k == n) candidatos.headOption.getOrElse(Seq())
+      else {
+        val combinaciones = candidatos.flatMap { s1 =>
+          candidatos.map {
+            s2 => s1 ++ s2
+          }
+        }
+        val validas = combinaciones.filter(o)
+        iterar(k * 2, validas)
+      }
+    }
+    val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    iterar(1, iniciales)
   }
 
   def reconstruirCadenaTurboMejorada(n: Int, o: Oraculo): Seq[Char] = {
