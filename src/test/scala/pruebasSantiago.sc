@@ -1,8 +1,24 @@
 import Benchmark.compararAlgoritmos
-import Oraculo.{Oraculo, alfabeto, crearOraculo}
-import ReconstCadenas.{reconstruirCadenaIngenuo, reconstruirCadenaMejorado}
-import ReconstCadenasPar.reconstruirCadenaMejoradoPar
+import Oraculo._                 // oraculo, alfabeto, crearOraculo
+import ReconstCadenas._          // reconstruirCadenaMejorado, reconstruirCadenaIngenuo
+import ReconstCadenasPar._       // reconstruirCadenaMejoradoPar
 import scala.util.Random
+import org.scalameter.*
+
+
+val pruebaSecuencia: Seq[Char] =  for{
+  i <- 1 to 16
+}yield alfabeto(Random.nextInt(4))
+val pruebaOraculo: Oraculo = crearOraculo(1)(pruebaSecuencia)
+
+
+reconstruirCadenaTurboMejorada(pruebaSecuencia.length, pruebaOraculo)
+measure{reconstruirCadenaTurboMejorada(pruebaSecuencia.length, pruebaOraculo)}
+measure{reconstruirCadenaTurboPar(1)(pruebaSecuencia.length, pruebaOraculo)}
+//Pruebas
+compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboPar(1)) (pruebaSecuencia.length, pruebaOraculo)
+
+
 
 // ————————————————————————————————
 // Generador de secuencias aleatorias
@@ -50,18 +66,24 @@ reconstruirCadenaMejorado(pruebaSecuencia5.length, pruebaOraculo5)
 // ————————————————————————————————
 // Ejecuciones individuales versión paralela
 // ————————————————————————————————
+
+// PRUEBA N°1
 val umbralPequeno1 = 9
 reconstruirCadenaMejoradoPar(umbralPequeno1)(pruebaSecuencia1.length, pruebaOraculo1)
 
+// PRUEBA N°2
 val umbralPequeno2 = 34
 reconstruirCadenaMejoradoPar(umbralPequeno2)(pruebaSecuencia2.length, pruebaOraculo2)
 
+// PRUEBA N°3
 val umbralPequeno3 = 668
 reconstruirCadenaMejoradoPar(umbralPequeno3)(pruebaSecuencia3.length, pruebaOraculo3)
 
+// PRUEBA N°4
 val umbralPequeno4 = 783
 reconstruirCadenaMejoradoPar(umbralPequeno4)(pruebaSecuencia4.length, pruebaOraculo4)
 
+// PRUEBA N°5
 val umbralPequeno5 = 512
 reconstruirCadenaMejoradoPar(umbralPequeno5)(pruebaSecuencia5.length, pruebaOraculo5)
 
@@ -69,6 +91,8 @@ reconstruirCadenaMejoradoPar(umbralPequeno5)(pruebaSecuencia5.length, pruebaOrac
 // ————————————————————————————————
 // Comparativa de umbrales en la versión paralela
 // ————————————————————————————————
+
+// PRUEBA N°1
 val umbralMedio1  = 3
 val umbralGrande1 = 4
 compararAlgoritmos(
@@ -76,6 +100,7 @@ compararAlgoritmos(
   reconstruirCadenaMejoradoPar(umbralGrande1)
 )(pruebaSecuencia1.length, pruebaOraculo1)
 
+// PRUEBA N°2
 val umbralMedio2  = 7
 val umbralGrande2 = 9
 compararAlgoritmos(
@@ -83,6 +108,7 @@ compararAlgoritmos(
   reconstruirCadenaMejoradoPar(umbralGrande2)
 )(pruebaSecuencia2.length, pruebaOraculo2)
 
+// PRUEBA N°3
 val umbralMedio3  = 512
 val umbralGrande3 = 1024
 compararAlgoritmos(
@@ -90,6 +116,7 @@ compararAlgoritmos(
   reconstruirCadenaMejoradoPar(umbralGrande3)
 )(pruebaSecuencia3.length, pruebaOraculo3)
 
+// PRUEBA N°4
 val umbralMedio4  = 128
 val umbralGrande4 = 512
 compararAlgoritmos(
@@ -97,6 +124,7 @@ compararAlgoritmos(
   reconstruirCadenaMejoradoPar(umbralGrande4)
 )(pruebaSecuencia4.length, pruebaOraculo4)
 
+// PRUEBA N°5
 val umbralMedio5  = 256
 val umbralGrande5 = 1024
 compararAlgoritmos(
@@ -138,3 +166,8 @@ val n1024  = 1024
 val s1024  = secAlAzar(n1024, Seq())
 val o1024  = crearOraculo(costoOraculo)(s1024)
 val res1024 = compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaMejorado)(n1024, o1024)
+
+
+
+
+
