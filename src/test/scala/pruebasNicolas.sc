@@ -16,9 +16,9 @@ val pruebaOraculo: Oraculo = crearOraculo(1)(pruebaSecuencia)
 //reconstruirCadenaMejorado(pruebaSecuencia.length, pruebaOraculo)
 reconstruirCadenaTurbo(pruebaSecuencia.length, pruebaOraculo)
 measure{reconstruirCadenaTurbo(pruebaSecuencia.length, pruebaOraculo)}
-measure{reconstruirCadenaTurboPar(1)(pruebaSecuencia.length, pruebaOraculo)}
+measure{reconstruirCadenaTurboPar(256)(pruebaSecuencia.length, pruebaOraculo)}
 //Pruebas
-compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(1)) (pruebaSecuencia.length, pruebaOraculo)
+compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(256)) (pruebaSecuencia.length, pruebaOraculo)
 // Árbol base de prueba
 val arbolDePrueba: Trie = Nodo(' ', false, List(
   Nodo('a', false, List(
