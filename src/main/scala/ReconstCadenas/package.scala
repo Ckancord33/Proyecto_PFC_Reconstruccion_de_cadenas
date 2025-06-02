@@ -24,7 +24,7 @@ package object ReconstCadenas {
     // y devuelve la secuencia reconstruida
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
-      if (k > n) Seq.empty  // caso base: no lo encontró (no debería suceder) cadena vacia 
+      if (k > n) Seq.empty  // caso base: no lo encontró (no debería suceder) cadena vacia
       else {
         // 1) extender cada candidato con cada letra
         val ext = for {
@@ -75,6 +75,11 @@ package object ReconstCadenas {
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     // Usa el filtro para ir más rápido
 
+    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
+    // y devuelve la secuencia reconstruida
+    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
+    // Usa el filtro para ir más rápido
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
@@ -98,12 +103,9 @@ package object ReconstCadenas {
     }
 
     def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
-      if (k == n)
-        sc.headOption.getOrElse(Seq.empty)
+      if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
-        //  SC_k = Filtrar(SC_{k/2}, k/2)
-        val candidatos = filtrar(sc, k / 2)
-        //  preguntar oraculo solo sobre estos candidatos
+        val candidatos = filtrar(sc, k)
         val validas = candidatos.filter(o)
 
         iterarTamanos(k * 2, validas)
@@ -122,7 +124,45 @@ package object ReconstCadenas {
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     // Usa el filtro para ir más rápido
     // Usa árboles de sufijos para guardar Seq[Seq[Char]]
-    ???
+    require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+
+    def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
+      // 1) todas las concatenaciones s1 ++ s2
+      val pares: Seq[Seq[Char]] =
+        for {
+          s1 <- sc
+          s2 <- sc
+        } yield s1 ++ s2
+
+      val arbolSc: Trie = arbolDeSufijos(sc)
+
+      // 2) para cada candidato s, comprobar todas sus subcadenas de longitud k
+      pares.filter { s =>
+        // indices validos de subcadena
+        val maxStart = s.length - k
+        // generar cada subcadena
+        (0 to maxStart).forall { i =>
+          val sub = s.slice(i, i + k)
+          pertenece(sub, arbolSc)
+        }
+      }
+    }
+
+    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
+      if (k == n)
+        sc.headOption.getOrElse(Seq.empty)
+      else {
+        //  SC_k = Filtrar(SC_{k/2}, k/2)
+        val candidatos = filtrar(sc, k)
+        //  preguntar oraculo solo sobre estos candidatos
+        val validas = candidatos.filter(o)
+
+        iterarTamanos(k * 2, validas)
+      }
+    }
+
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    iterarTamanos(1, inicial)
   }
 
 }

@@ -122,15 +122,125 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     // y devuelve la secuencia reconstruida
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
     // Usa paralelismo de tareas y/o datos
-    ???
+    require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+
+    def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
+      val pares =
+        if (k <= umbral) {
+          val parCandidatos = sc.par
+          parCandidatos.flatMap { s1 =>
+            parCandidatos.map { s2 => s1 ++ s2 }
+          }.seq
+        } else {
+          sc.flatMap { s1 =>
+            sc.map { s2 => s1 ++ s2 }
+          }
+        }
+
+      val filtradas =
+        if (k <= umbral) {
+          pares.par.filter { s =>
+            val maxStart = s.length - k
+            (0 to maxStart).forall { i =>
+              val sub = s.slice(i, i + k)
+              sc.contains(sub)
+            }
+          }.seq
+          
+        } else {
+          pares.filter { s =>
+            val maxStart = s.length - k
+            (0 to maxStart).forall { i =>
+              val sub = s.slice(i, i + k)
+              sc.contains(sub)
+            }
+          }
+        }
+
+      filtradas
+    }
+
+    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
+      if (k == n)
+        sc.headOption.getOrElse(Seq.empty)
+      else {
+        val candidatos = filtrar(sc, k)
+
+        val validas =
+          if (k * 2 <= umbral)
+            candidatos.par.filter(o).seq
+          else
+            candidatos.filter(o)
+
+        iterarTamanos(k * 2, validas)
+      }
+    }
+
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    iterarTamanos(1, inicial)
   }
 
   def reconstruirCadenaTurboAceleradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
     // y devuelve la secuencia reconstruida
     // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
+    // Usa el filtro para ir más rápido
     // Usa árboles de sufijos para guardar Seq[Seq[Char]]
-    // Usa paralelismo de tareas y/o datos
-    ???
+    require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
+
+    def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
+      val pares =
+        if (k <= umbral) {
+          val parCandidatos = sc.par
+          parCandidatos.flatMap { s1 =>
+            parCandidatos.map { s2 => s1 ++ s2 }
+          }.seq
+        } else {
+          sc.flatMap { s1 =>
+            sc.map { s2 => s1 ++ s2 }
+          }
+        }
+
+      val arbolSc: Trie = arbolDeSufijos(sc)
+
+      val filtradas =
+        if (k <= umbral) {
+          pares.par.filter { s =>
+            val maxStart = s.length - k
+            (0 to maxStart).forall { i =>
+              val sub = s.slice(i, i + k)
+              pertenece(sub, arbolSc)
+            }
+          }.seq
+        } else {
+          pares.filter { s =>
+            val maxStart = s.length - k
+            (0 to maxStart).forall { i =>
+              val sub = s.slice(i, i + k)
+              pertenece(sub, arbolSc)
+            }
+          }
+        }
+
+      filtradas
+    }
+
+    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
+      if (k == n) sc.headOption.getOrElse(Seq.empty)
+      else {
+        val candidatos = filtrar(sc, k)
+
+        val validas =
+          if (k * 2 <= umbral)
+            candidatos.par.filter(o).seq
+          else
+            candidatos.filter(o)
+
+        iterarTamanos(k * 2, validas)
+      }
+    }
+
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    iterarTamanos(1, inicial)
   }
 }
