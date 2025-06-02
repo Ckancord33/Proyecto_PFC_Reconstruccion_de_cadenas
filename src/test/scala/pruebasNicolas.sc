@@ -9,16 +9,18 @@ import ArbolSufijos._
 /*Crear una secuencia aleatoria de tamano i, solo cambiar
   el rango para hacer una secuencia mas larga */
 val pruebaSecuencia: Seq[Char] =  for{
-  i <- 1 to 16
+  i <- 1 to 256
 }yield alfabeto(Random.nextInt(4))
-val pruebaOraculo: Oraculo = crearOraculo(1)(pruebaSecuencia)
+val o: Oraculo = crearOraculo(1)(pruebaSecuencia)
+val n = pruebaSecuencia.length
 
-//reconstruirCadenaMejorado(pruebaSecuencia.length, pruebaOraculo)
-reconstruirCadenaTurbo(pruebaSecuencia.length, pruebaOraculo)
-measure{reconstruirCadenaTurbo(pruebaSecuencia.length, pruebaOraculo)}
-measure{reconstruirCadenaTurboPar(1)(pruebaSecuencia.length, pruebaOraculo)}
-//Pruebas
-compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(1)) (pruebaSecuencia.length, pruebaOraculo)
+reconstruirCadenaTurboAceleradaPar(1)(n, o)
+
+measure { reconstruirCadenaTurboMejoradaPar(n)(n, o) }
+measure { reconstruirCadenaTurboAceleradaPar(n)(n, o)}
+
+
+compararAlgoritmos(reconstruirCadenaTurboMejoradaPar(n), reconstruirCadenaTurboAceleradaPar(n)) (n, o)
 // Árbol base de prueba
 val arbolDePrueba: Trie = Nodo(' ', false, List(
   Nodo('a', false, List(
