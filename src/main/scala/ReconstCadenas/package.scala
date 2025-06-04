@@ -37,29 +37,10 @@ package object ReconstCadenas {
     construirCandidatos(0, Seq(Seq.empty))
   }
 
-  def reconstruirCadenaMejoradoV2(n: Int, o: Oraculo): Seq[Char] = {
-
-    def construirCandidatos(k: Int, candidatos: LazyList[Seq[Char]]): Seq[Char] = {
-      if (k == n) candidatos.headOption.getOrElse(Seq.empty)
-      else {
-        val filtrados = for {
-          prefijo <- candidatos
-          c <- alfabeto
-          combinacion = prefijo :+ c
-          if o(combinacion)
-        } yield combinacion
-        construirCandidatos(k + 1, filtrados)
-      }
-    }
-
-    construirCandidatos(0, LazyList(Seq.empty))
-  }
-
-
   def reconstruirCadenaTurbo(n: Int, o: Oraculo): Seq[Char] = {
 
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
-  
+
     def iterar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
       if (k == n) candidatos.headOption.getOrElse(Seq())
       else {
@@ -73,7 +54,7 @@ package object ReconstCadenas {
       }
     }
 
-    val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
     iterar(1, iniciales)
   }
 

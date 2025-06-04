@@ -20,9 +20,8 @@ def secuenciaRandom(longitud: Int) = {
 //val (secuenciaIngenuo, oIngenuo, nIngenuo) = secuenciaRandom(16)
 //secuenciaIngenuo
 //measure { reconstruirCadenaIngenuo(nIngenuo, oIngenuo) }
-val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(10)
-measure { reconstruirCadenaIngenuo(nMejorada, oMejorada) }
-//compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoV2) (nMejorada, oMejorada)
+val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(4096)
+measure { reconstruirCadenaTurboAceleradaPar(4096)(nMejorada, oMejorada) }
 
 
 
