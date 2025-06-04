@@ -8,12 +8,9 @@ import scala.collection.parallel.ParSeq
 
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
-  // Ahora versiones paralelas
   
   def reconstruirCadenaIngenuoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa paralelismo de tareas
+
     def cadenasDeTamanoN(contador: Int, tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
       if (contador == tamano) combParcial
       else {
