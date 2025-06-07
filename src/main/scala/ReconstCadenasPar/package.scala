@@ -8,12 +8,9 @@ import scala.collection.parallel.ParSeq
 
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
-  // Ahora versiones paralelas
   
   def reconstruirCadenaIngenuoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa paralelismo de tareas
+
     def cadenasDeTamanoN(contador: Int, tamano: Int, combParcial: LazyList[Seq[Char]]): LazyList[Seq[Char]] = {
       if (contador == tamano) combParcial
       else {
@@ -160,53 +157,37 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-      val pares =
-        if (k <= umbral) {
-          val parCandidatos = sc.par
-          parCandidatos.flatMap { s1 =>
-            parCandidatos.map { s2 => s1 ++ s2 }
-          }.seq
-        } else {
-          sc.flatMap { s1 =>
-            sc.map { s2 => s1 ++ s2 }
-          }
-        }
-
       val arbolSc: Trie = arbolDeSufijos(sc)
-
-      val filtradas =
-        if (k <= umbral) {
-          pares.par.filter { s =>
-            val maxStart = s.length - k
-            (0 to maxStart).forall { i =>
-              val sub = s.slice(i, i + k)
-              pertenece(sub, arbolSc)
-            }
-          }.seq
-        } else {
-          pares.filter { s =>
-            val maxStart = s.length - k
-            (0 to maxStart).forall { i =>
-              val sub = s.slice(i, i + k)
-              pertenece(sub, arbolSc)
-            }
+      if (k <= umbral) {
+        val parSc = sc.par
+        (for {
+          s1 <- parSc
+          s2 <- parSc
+          combinacion = s1 ++ s2
+          if (0 to k).forall { i =>
+            val sub = combinacion.slice(i, i + k)
+            pertenece(sub, arbolSc)
           }
-        }
-
-      filtradas
+          if o(combinacion)
+        } yield combinacion).seq
+      } else {
+        for {
+          s1 <- sc
+          s2 <- sc
+          combinacion = s1 ++ s2
+          if (0 to k).forall { i =>
+            val sub = combinacion.slice(i, i + k)
+            pertenece(sub, arbolSc)
+          }
+          if o(combinacion)
+        } yield combinacion
+      }
     }
 
     def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
       if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
-        val candidatos = filtrar(sc, k)
-
-        val validas =
-          if (k * 2 <= umbral)
-            candidatos.par.filter(o).seq
-          else
-            candidatos.filter(o)
-
+        val validas = filtrar(sc, k)
         iterarTamanos(k * 2, validas)
       }
     }
