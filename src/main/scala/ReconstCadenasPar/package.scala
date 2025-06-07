@@ -28,8 +28,10 @@ package object ReconstCadenasPar {
     }yield task{cadenasDeTamanoN(umbral, n, LazyList(comb)).find(o)}).toList
 
     def buscar(tareas: List[ForkJoinTask[Option[Seq[Char]]]]): Seq[Char] = tareas match{
+      case Nil => Seq()
       case x :: xs => x.join().getOrElse(buscar(xs))
     }
+
     buscar(tareas)
   }
 
