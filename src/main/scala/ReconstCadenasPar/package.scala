@@ -37,47 +37,32 @@ package object ReconstCadenasPar {
   }
 
   def reconstruirCadenaMejoradoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa paralelismo de tareas y de datos según el tamaño del conjunto
-    def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
-      if (k > n) Seq.empty // no encontrado (no debería pasar)
+
+    def construirCandidatosPar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+      if (k == n) candidatos.headOption.getOrElse(Seq.empty)
       else {
-        // 1) Generar todas las extensiones
-        val ext: Seq[Seq[Char]] =
-          if (candidatos.size * alfabeto.size <= umbral) {
-            candidatos.flatMap(prefijo =>
-              alfabeto.map(c => prefijo :+ c)
-            )
-          } else {
-            // paralelismo de datos para conjuntos grandes
-            candidatos.par
-              .flatMap(prefijo => alfabeto.map(c => prefijo :+ c))
-              .toList
-          }
-
-        // 2) Filtrar con el oráculo
         val filtrados: Seq[Seq[Char]] =
-          if (ext.size <= umbral) {
-            ext.filter(o)
+          if (candidatos.size * alfabeto.size <= umbral) {
+            for {
+              prefijo <- candidatos
+              c <- alfabeto
+              combinacion = prefijo :+ c
+              if o(combinacion)
+            } yield combinacion
           } else {
-            ext.par
-              .filter(o)
-              .toList
+            candidatos.par.flatMap { prefijo =>
+              alfabeto.par.flatMap { c =>
+                val combinacion = prefijo :+ c
+                if (o(combinacion)) Seq(combinacion) else Nil
+              }
+            }.toList
           }
-
-        // 3) Si alguno ya tiene longitud n, devolverlo
-        val completados = filtrados.filter(_.length == n)
-        if (completados.nonEmpty) completados.head
-        else
-          // 4) Continuar con la siguiente longitud
-          construirCandidatos(k + 1, filtrados)
+        construirCandidatosPar(k + 1, filtrados)
       }
     }
 
-    // inicio con SC₀ = Seq(Seq.empty)
-    construirCandidatos(1, Seq(Seq.empty))
+    construirCandidatosPar(0, Seq(Seq.empty))
+
   }
 
 def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
@@ -118,66 +103,52 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 }
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa paralelismo de tareas y/o datos
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-      val pares =
-        if (k <= umbral) {
-          val parCandidatos = sc.par
-          parCandidatos.flatMap { s1 =>
-            parCandidatos.map { s2 => s1 ++ s2 }
-          }.seq
-        } else {
-          sc.flatMap { s1 =>
-            sc.map { s2 => s1 ++ s2 }
+      if (sc.size <= umbral) {
+        for {
+          s1 <- sc
+          s2 <- sc
+          combinacion = s1 ++ s2
+          if (0 to k).forall { i =>
+            val sub = combinacion.slice(i, i + k)
+            sc.contains(sub)
           }
-        }
+        } yield combinacion
 
-      val filtradas =
-        if (k <= umbral) {
-          pares.par.filter { s =>
-            val maxStart = s.length - k
-            (0 to maxStart).forall { i =>
-              val sub = s.slice(i, i + k)
+      } else {
+        sc.par.flatMap { s1 =>
+          sc.par.flatMap { s2 =>
+            val combinacion = s1 ++ s2
+            val todasSubcadenasPresentes = (0 to k).forall { i =>
+              val sub = combinacion.slice(i, i + k)
               sc.contains(sub)
             }
-          }.seq
-          
-        } else {
-          pares.filter { s =>
-            val maxStart = s.length - k
-            (0 to maxStart).forall { i =>
-              val sub = s.slice(i, i + k)
-              sc.contains(sub)
-            }
+            if (todasSubcadenasPresentes) Seq(combinacion) else Nil
           }
-        }
-
-      filtradas
-    }
-
-    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
-      if (k == n)
-        sc.headOption.getOrElse(Seq.empty)
-      else {
-        val candidatos = filtrar(sc, k)
-
-        val validas =
-          if (k * 2 <= umbral)
-            candidatos.par.filter(o).seq
-          else
-            candidatos.filter(o)
-
-        iterarTamanos(k * 2, validas)
+        }.toList
       }
     }
 
-    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
-    iterarTamanos(1, inicial)
+    def iterarTamanosPar(k: Int, sc: Seq[Seq[Char]]): Seq[Char] =
+      if (k == n) sc.headOption.getOrElse(Seq.empty)
+      else {
+        val candidatos = filtrar(sc, k)
+        val validas =
+          if (candidatos.size < umbral) candidatos.filter(o)
+          else candidatos.par.filter(o).toList
+
+        iterarTamanosPar(k * 2, validas)
+      }
+
+    val inicial =
+      if (alfabeto.size < umbral) alfabeto.map(c => Seq(c))
+      else alfabeto.par.map(c => Seq(c)).toList
+
+    iterarTamanosPar(1, inicial)
+
   }
 
   def reconstruirCadenaTurboAceleradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
