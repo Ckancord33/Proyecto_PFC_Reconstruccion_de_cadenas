@@ -11,7 +11,7 @@ import ArbolSufijos._
 def secuenciaRandom(longitud: Int) = {
   val pruebaSecuencia: Seq[Char] = for {
     i <- 1 to longitud
-  } yield alfabeto(3)
+  } yield alfabeto(Random.nextInt(4))
   val o: Oraculo = crearOraculo(1)(pruebaSecuencia)
   val n = pruebaSecuencia.length
   (pruebaSecuencia, o, n)
@@ -20,10 +20,8 @@ def secuenciaRandom(longitud: Int) = {
 //val (secuenciaIngenuo, oIngenuo, nIngenuo) = secuenciaRandom(16)
 //secuenciaIngenuo
 //measure { reconstruirCadenaIngenuo(nIngenuo, oIngenuo) }
-val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(2)
-reconstruirCadenaMejoradoCount(nMejorada, oMejorada)
-reconstruirCadenaTurboCount(nMejorada, oMejorada)
-compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaTurbo)(nMejorada, oMejorada)
+//val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(64)
+//compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(64))(nMejorada, oMejorada)
 
 
 
@@ -40,79 +38,79 @@ compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaTurbo)(nMejorada,
 
 
 
-// Árbol base de prueba
-//val arbolDePrueba: Trie = Nodo(' ', false, List(
-//  Nodo('a', false, List(
-//    Hoja('b', true),
-//    Hoja('c', true)
-//  )),
-//  Hoja('x', true)
-//))
-//
-//// Pruebas iniciales
-//assert(pertenece(Seq('a', 'b'), arbolDePrueba))     // true
-//assert(pertenece(Seq('a', 'c'), arbolDePrueba))     // true
-//assert(pertenece(Seq('x'), arbolDePrueba))          // true
-//assert(!pertenece(Seq('a'), arbolDePrueba))         // false
-//assert(!pertenece(Seq('b'), arbolDePrueba))         // false
-//assert(!pertenece(Seq('a', 'b', 'd'), arbolDePrueba)) // false
-//assert(!pertenece(Seq('r'), arbolDePrueba))         // false
-//
-//// Adicionando una nueva palabra
-//val arbol1 = adicionar(Seq('r', 'b', 'c', 'd'), arbolDePrueba)
-//assert(pertenece(Seq('r', 'b', 'c', 'd'), arbol1))   // true
-//assert(pertenece(Seq('a', 'b'), arbol1))            // true
-//assert(pertenece(Seq('x'), arbol1))                 // true
-//assert(!pertenece(Seq('r', 'b', 'c'), arbol1))      // false
-//
-//// Más adiciones
-//val arbol2 = adicionar(Seq('a', 'b', 'd'), arbol1)
-//val arbol3 = adicionar(Seq('a', 'z'), arbol2)
-//val arbol4 = adicionar(Seq('z'), arbol3)
-//val arbol5 = adicionar(Seq('z', 'z', 'z'), arbol4)
-//
-//// Nuevas pruebas
-//assert(pertenece(Seq('a', 'b', 'd'), arbol2))        // true
-//assert(pertenece(Seq('a', 'z'), arbol3))             // true
-//assert(pertenece(Seq('z'), arbol4))                  // true
-//assert(pertenece(Seq('z', 'z', 'z'), arbol5))        // true
-//assert(pertenece(Seq('a', 'b'), arbol5))             // true
-//assert(pertenece(Seq('x'), arbol5))                  // true
-//assert(!pertenece(Seq('a', 'b', 'd', 'e'), arbol5))  // false
-//assert(!pertenece(Seq('z', 'z'), arbol5))            // false, arbolDePrueba2)
-//
-//val arbolS = arbolDeSufijos(Seq(Seq('c','a','c','t'), Seq('a','c','a','c')))
-//pertenece(Seq('c','t'), arbolS)
-//
-//val t = Nodo(' ', false, List(
-//  Nodo('a', false, List(
-//    Nodo('c', true, List(
-//      Nodo('a', false, List(
-//        Hoja('c', true)
-//      )),
-//      Hoja('t', true)
-//    ))
-//  )),
-//  Nodo('c', true, List(
-//    Nodo('a', false, List(
-//      Nodo('c', true, List(
-//        Hoja('t', true)
-//      ))
-//    )),
-//    Hoja('t', true)
-//  )),
-//  Hoja('t', true)
-//))
-//
-//t == arbolS //No quedan iguales nomas porque se organizan distinto
-//
-//adicionar("hola".toSeq, Nodo(' ', false, Nil))
-//
-//val arbol10 = arbolDeSufijos(Seq("hola".toSeq, "mundo".toSeq))
-//// Sufijos esperados: "hola", "ola", "la", "a", "mundo", "undo", "ndo", "do", "o"
-//assert(pertenece("hola".toSeq, arbol10))
-//assert(pertenece("mundo".toSeq, arbol10))
-//assert(pertenece("ndo".toSeq, arbol10))
-//assert(pertenece("o".toSeq, arbol10))
-//assert(!pertenece("ho".toSeq, arbol10))
-//assert(!pertenece("mun".toSeq, arbol10))
+//Árbol base de prueba
+val arbolDePrueba: Trie = Nodo(' ', false, List(
+  Nodo('a', false, List(
+    Hoja('b', true),
+    Hoja('c', true)
+  )),
+  Hoja('x', true)
+))
+
+// Pruebas iniciales
+assert(pertenece(Seq('a', 'b'), arbolDePrueba))     // true
+assert(pertenece(Seq('a', 'c'), arbolDePrueba))     // true
+assert(pertenece(Seq('x'), arbolDePrueba))          // true
+assert(!pertenece(Seq('a'), arbolDePrueba))         // false
+assert(!pertenece(Seq('b'), arbolDePrueba))         // false
+assert(!pertenece(Seq('a', 'b', 'd'), arbolDePrueba)) // false
+assert(!pertenece(Seq('r'), arbolDePrueba))         // false
+
+// Adicionando una nueva palabra
+val arbol1 = adicionar(Seq('r', 'b', 'c', 'd'), arbolDePrueba)
+assert(pertenece(Seq('r', 'b', 'c', 'd'), arbol1))   // true
+assert(pertenece(Seq('a', 'b'), arbol1))            // true
+assert(pertenece(Seq('x'), arbol1))                 // true
+assert(!pertenece(Seq('r', 'b', 'c'), arbol1))      // false
+
+// Más adiciones
+val arbol2 = adicionar(Seq('a', 'b', 'd'), arbol1)
+val arbol3 = adicionar(Seq('a', 'z'), arbol2)
+val arbol4 = adicionar(Seq('z'), arbol3)
+val arbol5 = adicionar(Seq('z', 'z', 'z'), arbol4)
+
+// Nuevas pruebas
+assert(pertenece(Seq('a', 'b', 'd'), arbol2))        // true
+assert(pertenece(Seq('a', 'z'), arbol3))             // true
+assert(pertenece(Seq('z'), arbol4))                  // true
+assert(pertenece(Seq('z', 'z', 'z'), arbol5))        // true
+assert(pertenece(Seq('a', 'b'), arbol5))             // true
+assert(pertenece(Seq('x'), arbol5))                  // true
+assert(!pertenece(Seq('a', 'b', 'd', 'e'), arbol5))  // false
+assert(!pertenece(Seq('z', 'z'), arbol5))            // false, arbolDePrueba2)
+
+val arbolS = arbolDeSufijos(Seq(Seq('c','a','c','t'), Seq('a','c','a','c')))
+pertenece(Seq('c','t'), arbolS)
+
+val t = Nodo(' ', false, List(
+  Nodo('a', false, List(
+    Nodo('c', true, List(
+      Nodo('a', false, List(
+        Hoja('c', true)
+      )),
+      Hoja('t', true)
+    ))
+  )),
+  Nodo('c', true, List(
+    Nodo('a', false, List(
+      Nodo('c', true, List(
+        Hoja('t', true)
+      ))
+    )),
+    Hoja('t', true)
+  )),
+  Hoja('t', true)
+))
+
+t == arbolS //No quedan iguales nomas porque se organizan distinto
+
+adicionar("hola".toSeq, Nodo(' ', false, Nil))
+
+val arbol10 = arbolDeSufijos(Seq("hola".toSeq, "mundo".toSeq))
+// Sufijos esperados: "hola", "ola", "la", "a", "mundo", "undo", "ndo", "do", "o"
+assert(pertenece("hola".toSeq, arbol10))
+assert(pertenece("mundo".toSeq, arbol10))
+assert(pertenece("ndo".toSeq, arbol10))
+assert(pertenece("o".toSeq, arbol10))
+assert(!pertenece("ho".toSeq, arbol10))
+assert(!pertenece("mun".toSeq, arbol10))

@@ -47,21 +47,18 @@ package object ArbolSufijos {
         case Hoja(car, marcada) => Hoja(car, true)
       }
       case x +: xs =>
-        if (!cabezas(t).contains(x)){
-          t match
-            case Nodo(car, marcada, hijos) => Nodo(car, marcada, adicionar(xs, Hoja(x, false)) :: hijos)
-            case Hoja(car, marcada) => Nodo(car, marcada, List(adicionar(xs, Hoja(x, false))))
-        }
-        else {
-          def reemplazarHijo(hijos: List[Trie]): List[Trie] = hijos match {
-            case Nil => Nil
-            case h :: hs =>
-              if (raiz(h) == x) adicionar(xs, h) :: hs
-              else h :: reemplazarHijo(hs)
-          }
-          t match
-            case Nodo(car, marcada, hijos) => Nodo(car, marcada, reemplazarHijo(hijos))
-            case Hoja(car, marcada) => Nodo(car, marcada, List(adicionar(xs, Hoja(x, false))))
+        t match {
+          case Nodo(car, marcada, hijos) => if (!cabezas(t).contains(x)) Nodo(car, marcada, adicionar(xs, Hoja(x, false)) :: hijos)
+            else{
+              def reemplazarHijo(hijos: List[Trie]): List[Trie] = hijos match{
+                case Nil => Nil
+                case h :: hs =>
+                  if (raiz(h) == x) adicionar(xs, h) :: hs
+                  else h :: reemplazarHijo(hs)
+              }
+              Nodo(car, marcada, reemplazarHijo(hijos))
+            }
+          case Hoja(car, marcada) => Nodo(car, marcada, List(adicionar(xs, Hoja(x, false))))
         }
     }
   }

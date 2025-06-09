@@ -1,6 +1,17 @@
-import Oraculo._
-import ReconstCadenas._
-import ReconstCadenasPar._
+import Oraculo.*
+import ReconstCadenas.*
+import ReconstCadenasPar.*
+import org.scalameter.measure
+import scala.util.Random
+
+def secuenciaRandom(longitud: Int) = {
+  val pruebaSecuencia: Seq[Char] = for {
+    i <- 1 to longitud
+  } yield alfabeto(Random.nextInt(4))
+  val o: Oraculo = crearOraculo(1)(pruebaSecuencia)
+  val n = pruebaSecuencia.length
+  (pruebaSecuencia, n, o)
+}
 
 /**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION INGENUA
@@ -47,6 +58,11 @@ val sec7 = Seq('a', 'c', 'g', 't', 'a', 'c', 'g', 't')
 val or7 = crearOraculo(1)(sec7)
 reconstruirCadenaIngenuo(sec7.length, or7) == sec7
 reconstruirCadenaIngenuoPar(3)(sec7.length, or7) == sec7
+
+//Rendimiento de la funcion ingenua
+
+val (secuenciaIngenuo, nIngenuo, oIngenuo) = secuenciaRandom(12)
+measure { reconstruirCadenaIngenuoPar(4)(nIngenuo, oIngenuo) }
 
 /**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO ACELERADA
