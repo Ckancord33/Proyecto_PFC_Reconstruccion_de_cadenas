@@ -5,7 +5,6 @@ import scala.collection.parallel.CollectionConverters._
 import Oraculo.*
 import ArbolSufijos.*
 import scala.collection.parallel.ParSeq
-
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
   
@@ -28,16 +27,15 @@ package object ReconstCadenasPar {
     }yield task{cadenasDeTamanoN(umbral, n, LazyList(comb)).find(o)}).toList
 
     def buscar(tareas: List[ForkJoinTask[Option[Seq[Char]]]]): Seq[Char] = tareas match{
+      case Nil => Seq()
       case x :: xs => x.join().getOrElse(buscar(xs))
     }
+
     buscar(tareas)
   }
 
   def reconstruirCadenaMejoradoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa paralelismo de tareas y de datos según el tamaño del conjunto
+
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
       if (k > n) Seq.empty // no encontrado (no debería pasar)
       else {
@@ -115,10 +113,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 }
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa paralelismo de tareas y/o datos
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
@@ -178,11 +173,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
   }
 
   def reconstruirCadenaTurboAceleradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa el filtro para ir más rápido
-    // Usa árboles de sufijos para guardar Seq[Seq[Char]]
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
