@@ -35,30 +35,31 @@ package object ReconstCadenasPar {
 
   def reconstruirCadenaMejoradoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
-    def construirCandidatosPar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+    def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
       if (k == n) candidatos.headOption.getOrElse(Seq.empty)
       else {
         val filtrados: Seq[Seq[Char]] =
-          if (candidatos.size * alfabeto.size <= umbral) {
-            for {
-              prefijo <- candidatos
-              c <- alfabeto
-              combinacion = prefijo :+ c
-              if o(combinacion)
-            } yield combinacion
-          } else {
+          if (k <= umbral) {
             candidatos.par.flatMap { prefijo =>
               alfabeto.par.flatMap { c =>
                 val combinacion = prefijo :+ c
                 if (o(combinacion)) Seq(combinacion) else Nil
               }
             }.toList
+          } else {
+            for {
+              prefijo <- candidatos
+              c <- alfabeto
+              combinacion = prefijo :+ c
+              if o(combinacion)
+            } yield combinacion
           }
-        construirCandidatosPar(k + 1, filtrados)
+
+        construirCandidatos(k + 1, filtrados)
       }
     }
 
-    construirCandidatosPar(0, Seq(Seq.empty))
+    construirCandidatos(0, Seq(Seq.empty))
 
   }
 
@@ -104,18 +105,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
-      if (sc.size <= umbral) {
-        for {
-          s1 <- sc
-          s2 <- sc
-          combinacion = s1 ++ s2
-          if (0 to k).forall { i =>
-            val sub = combinacion.slice(i, i + k)
-            sc.contains(sub)
-          }
-        } yield combinacion
-
-      } else {
+      if (k <= umbral) {
         sc.par.flatMap { s1 =>
           sc.par.flatMap { s2 =>
             val combinacion = s1 ++ s2
@@ -126,25 +116,36 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
             if (todasSubcadenasPresentes) Seq(combinacion) else Nil
           }
         }.toList
+      } else {
+        for {
+          s1 <- sc
+          s2 <- sc
+          combinacion = s1 ++ s2
+          if (0 to k).forall { i =>
+            val sub = combinacion.slice(i, i + k)
+            sc.contains(sub)
+          }
+        } yield combinacion
       }
     }
 
-    def iterarTamanosPar(k: Int, sc: Seq[Seq[Char]]): Seq[Char] =
+    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] =
       if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
         val candidatos = filtrar(sc, k)
-        val validas =
-          if (candidatos.size < umbral) candidatos.filter(o)
-          else candidatos.par.filter(o).toList
 
-        iterarTamanosPar(k * 2, validas)
+        val validas =
+          if (k <= umbral) candidatos.par.filter(o).toList
+          else candidatos.filter(o)
+
+        iterarTamanos(k * 2, validas)
       }
 
     val inicial =
-      if (alfabeto.size < umbral) alfabeto.map(c => Seq(c))
-      else alfabeto.par.map(c => Seq(c)).toList
+      if (1 <= umbral) alfabeto.par.map(c => Seq(c)).toList
+      else alfabeto.map(c => Seq(c))
 
-    iterarTamanosPar(1, inicial)
+    iterarTamanos(1, inicial)
 
   }
 
