@@ -11,7 +11,7 @@ import ArbolSufijos._
 def secuenciaRandom(longitud: Int) = {
   val pruebaSecuencia: Seq[Char] = for {
     i <- 1 to longitud
-  } yield alfabeto(Random.nextInt(4))
+  } yield alfabeto(3)
   val o: Oraculo = crearOraculo(1)(pruebaSecuencia)
   val n = pruebaSecuencia.length
   (pruebaSecuencia, o, n)
@@ -20,8 +20,10 @@ def secuenciaRandom(longitud: Int) = {
 //val (secuenciaIngenuo, oIngenuo, nIngenuo) = secuenciaRandom(16)
 //secuenciaIngenuo
 //measure { reconstruirCadenaIngenuo(nIngenuo, oIngenuo) }
-val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(4096)
-measure { reconstruirCadenaTurboAceleradaPar(4096)(nMejorada, oMejorada) }
+val (secuenciaMejorada, oMejorada, nMejorada) = secuenciaRandom(2)
+reconstruirCadenaMejoradoCount(nMejorada, oMejorada)
+reconstruirCadenaTurboCount(nMejorada, oMejorada)
+compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaTurbo)(nMejorada, oMejorada)
 
 
 
