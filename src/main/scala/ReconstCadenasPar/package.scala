@@ -5,7 +5,6 @@ import scala.collection.parallel.CollectionConverters._
 import Oraculo.*
 import ArbolSufijos.*
 import scala.collection.parallel.ParSeq
-
 import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
   
@@ -152,11 +151,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
   }
 
   def reconstruirCadenaTurboAceleradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    // recibe la longitud de la secuencia que hay que reconstruir (n, potencia de 2), y un oráculo para esa secuencia
-    // y devuelve la secuencia reconstruida
-    // Usa la propiedad de que si s = s1 ++ s2 entonces s1 y s2 también son subsecuencias de s
-    // Usa el filtro para ir más rápido
-    // Usa árboles de sufijos para guardar Seq[Seq[Char]]
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
