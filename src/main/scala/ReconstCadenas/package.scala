@@ -71,14 +71,14 @@ package object ReconstCadenas {
             val sub = combinacion.slice(i, i + k)
             sc.contains(sub)
           }
+          if(o(combinacion))
         } yield combinacion
     }
 
     def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
       if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
-        val candidatos = filtrar(sc, k)
-        val validas = candidatos.filter(o)
+        val validas = filtrar(sc, k)
         iterarTamanos(k * 2, validas)
       }
     }
@@ -108,8 +108,7 @@ package object ReconstCadenas {
     }
 
     def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
-      if (k == n)
-        sc.headOption.getOrElse(Seq.empty)
+      if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
         val validas = filtrar(sc, k)
         iterarTamanos(k * 2, validas)
