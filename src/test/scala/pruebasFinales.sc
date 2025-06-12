@@ -2,6 +2,7 @@ import Oraculo.*
 import ReconstCadenas.*
 import ReconstCadenasPar.*
 import org.scalameter.measure
+import Benchmark._
 import scala.util.Random
 
 def secuenciaRandom(longitud: Int) = {
@@ -59,10 +60,13 @@ val or7 = crearOraculo(1)(sec7)
 reconstruirCadenaIngenuo(sec7.length, or7) == sec7
 reconstruirCadenaIngenuoPar(3)(sec7.length, or7) == sec7
 
-//Rendimiento de la funcion ingenua
+//Rendimiento de la funcion ingenua secuencial
+val (secuenciaIngenuo, nIngenuo, oIngenuo) = secuenciaRandom(10)
+measure { reconstruirCadenaIngenuo(nIngenuo, oIngenuo) }
 
-val (secuenciaIngenuo, nIngenuo, oIngenuo) = secuenciaRandom(12)
-measure { reconstruirCadenaIngenuoPar(4)(nIngenuo, oIngenuo) }
+//Rendimiento de la funcion ingenua paralela
+val (secuenciaIngenuo2, nIngenuo2, oIngenuo2) = secuenciaRandom(12)
+measure { reconstruirCadenaIngenuoPar(4)(nIngenuo2, oIngenuo2) }
 
 
 /**
@@ -146,6 +150,23 @@ measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
 
 
 /**
- * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO ACELERADA
+ * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION INGENUA
  */
 
+// Tamaño 2
+val (_, nIngenuop2, oIngenuop2) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(1))(nIngenuop2, oIngenuop2)
+
+// Tamaño 4
+val (_, nIngenuop4, oIngenuop4) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(2))(nIngenuop4, oIngenuop4)
+
+// Tamaño 8
+val (_, nIngenuop8, oIngenuop8) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(3))(nIngenuop8, oIngenuop8)
