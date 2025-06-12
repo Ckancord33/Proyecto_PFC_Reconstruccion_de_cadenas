@@ -64,6 +64,87 @@ reconstruirCadenaIngenuoPar(3)(sec7.length, or7) == sec7
 val (secuenciaIngenuo, nIngenuo, oIngenuo) = secuenciaRandom(12)
 measure { reconstruirCadenaIngenuoPar(4)(nIngenuo, oIngenuo) }
 
+
+/**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION MEJORADO
+ */
+
+// Caso 1: cadena vacía (2^0 = 0)
+val secM1 = Seq[Char]()
+val orM1 = crearOraculo(1)(secM1)
+reconstruirCadenaMejorado(secM1.length, orM1) == secM1
+reconstruirCadenaMejoradoPar(0)(secM1.length, orM1) == secM1
+
+
+// Caso 2: longitud 1 (2^0 = 1)
+val secM2 = Seq('a')
+val orM2 = crearOraculo(1)(secM2)
+reconstruirCadenaMejorado(secM2.length, orM2) == secM2
+reconstruirCadenaMejoradoPar(0)(secM2.length, orM2) == secM2
+
+
+// Caso 3: longitud 2 (2^1)
+val secM3 = Seq('c', 'g')
+val orM3 = crearOraculo(1)(secM3)
+reconstruirCadenaMejorado(secM3.length, orM3) == secM3
+reconstruirCadenaMejoradoPar(1)(secM3.length, orM3) == secM3
+
+
+// Caso 4: longitud 25 (2^4 < 25 < 2^5)
+val secM4 = Seq('c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'a', 'g', 'c', 't', 'g', 'a', 't', 'c', 'g', 't')
+val orM4 = crearOraculo(1)(secM4)
+reconstruirCadenaMejorado(secM4.length, orM4) == secM4
+reconstruirCadenaMejoradoPar(1)(secM4.length, orM4) == secM4
+
+
+
+// Caso 5: longitud 8 (2^3)
+val secM5 = Seq('a', 'c', 'g', 't', 'a', 'c', 'g', 't')
+val orM5 = crearOraculo(1)(secM5)
+reconstruirCadenaMejorado(secM5.length, orM5) == secM5
+reconstruirCadenaMejoradoPar(2)(secM5.length, orM5) == secM5
+
+
+// Caso 6: longitud 16 (2^4)
+val secM6 = Seq('a', 'c', 'g', 't', 'c', 'a', 'g', 't', 'g', 't', 'c', 'a', 't', 'g', 'a', 'c')
+val orM6 = crearOraculo(1)(secM6)
+reconstruirCadenaMejorado(secM6.length, orM6) == secM6
+reconstruirCadenaMejoradoPar(3)(secM6.length, orM6) == secM6
+
+
+// Caso 7: longitud 32 (2^5)
+val secM7 = Seq('c', 't', 'a', 'g', 't', 'g', 'c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'g', 'a')
+val orM7 = crearOraculo(1)(secM7)
+reconstruirCadenaMejorado(secM7.length, orM7) == secM7
+reconstruirCadenaMejoradoPar(4)(secM7.length, orM7) == secM7
+
+
+// Caso 8: longitud 128 (2^7)
+val secM8 = Seq('a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t')
+val orM8 = crearOraculo(1)(secM8)
+reconstruirCadenaMejorado(secM8.length, orM8) == secM8
+reconstruirCadenaMejoradoPar(6)(secM8.length, orM8) == secM8
+
+//Rendimiento de la funcion mejorada
+val (secMRend, nMRend, oMRend) = secuenciaRandom(1024)
+measure { reconstruirCadenaMejorado(nMRend, oMRend) }
+measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
+
+
+/**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION TURBO
+ */
+
+/**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO MEJORADA
+ */
+
+
+/**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO ACELERADA
+ */
+
+
 /**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO ACELERADA
  */
