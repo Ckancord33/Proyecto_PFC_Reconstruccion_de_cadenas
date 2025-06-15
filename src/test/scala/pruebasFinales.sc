@@ -68,6 +68,28 @@ measure { reconstruirCadenaIngenuo(nIngenuo, oIngenuo) }
 val (secuenciaIngenuo2, nIngenuo2, oIngenuo2) = secuenciaRandom(12)
 measure { reconstruirCadenaIngenuoPar(4)(nIngenuo2, oIngenuo2) }
 
+/**
+ * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION INGENUA
+ */
+
+// Tamaño 2
+val (_, nIngenuop2, oIngenuop2) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(1))(nIngenuop2, oIngenuop2)
+
+// Tamaño 4
+val (_, nIngenuop4, oIngenuop4) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(2))(nIngenuop4, oIngenuop4)
+
+// Tamaño 8
+val (_, nIngenuop8, oIngenuop8) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(3))(nIngenuop8, oIngenuop8)
+
 
 /**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION MEJORADO
@@ -134,6 +156,71 @@ val (secMRend, nMRend, oMRend) = secuenciaRandom(1024)
 measure { reconstruirCadenaMejorado(nMRend, oMRend) }
 measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
 
+/**
+ * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION SOLUCION MEJORADA
+ */
+
+// Tamaño 1 (2^0)
+val (_, nMejoradoP1, oMejoradoP1) = secuenciaRandom(1)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(0))(nMejoradoP1, oMejoradoP1)
+
+// Tamaño 2 (2^1)
+val (_, nMejoradoP2, oMejoradoP2) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(1))(nMejoradoP2, oMejoradoP2)
+
+// Tamaño 4 (2^2)
+val (_, nMejoradoP4, oMejoradoP4) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(1))(nMejoradoP4, oMejoradoP4)
+
+// Tamaño 8 (2^3)
+val (_, nMejoradoP8, oMejoradoP8) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(2))(nMejoradoP8, oMejoradoP8)
+
+// Tamaño 16 (2^4)
+val (_, nMejoradoP16, oMejoradoP16) = secuenciaRandom(16)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(3))(nMejoradoP16, oMejoradoP16)
+
+// Tamaño 32 (2^5)
+val (_, nMejoradoP32, oMejoradoP32) = secuenciaRandom(32)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(4))(nMejoradoP32, oMejoradoP32)
+
+// Tamaño 64 (2^6)
+val (_, nMejoradoP64, oMejoradoP64) = secuenciaRandom(64)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(5))(nMejoradoP64, oMejoradoP64)
+
+// Tamaño 128 (2^7)
+val (_, nMejoradoP128, oMejoradoP128) = secuenciaRandom(128)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(6))(nMejoradoP128, oMejoradoP128)
+
+// Tamaño 256 (2^8)
+val (_, nMejoradoP256, oMejoradoP256) = secuenciaRandom(256)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(7))(nMejoradoP256, oMejoradoP256)
+
+// Tamaño 512 (2^9)
+val (_, nMejoradoP512, oMejoradoP512) = secuenciaRandom(512)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(8))(nMejoradoP512, oMejoradoP512)
+
+
 
 /**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION TURBO
@@ -149,24 +236,3 @@ measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
  */
 
 
-/**
- * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION INGENUA
- */
-
-// Tamaño 2
-val (_, nIngenuop2, oIngenuop2) = secuenciaRandom(2)
-for {
-  i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(1))(nIngenuop2, oIngenuop2)
-
-// Tamaño 4
-val (_, nIngenuop4, oIngenuop4) = secuenciaRandom(4)
-for {
-  i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(2))(nIngenuop4, oIngenuop4)
-
-// Tamaño 8
-val (_, nIngenuop8, oIngenuop8) = secuenciaRandom(8)
-for {
-  i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(3))(nIngenuop8, oIngenuop8)
