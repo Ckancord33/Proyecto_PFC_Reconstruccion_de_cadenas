@@ -160,65 +160,65 @@ measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
  * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION SOLUCION MEJORADA
  */
 
-// Tamaño 1 (2^0)
-val (_, nMejoradoP1, oMejoradoP1) = secuenciaRandom(1)
+// Tamaño 1 (2^0). Umbral > Tamaño (Ej: Umbral = 10)
+val (_, nMejoradoP_gt1, oMejoradoP_gt1) = secuenciaRandom(1)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(0))(nMejoradoP1, oMejoradoP1)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(10))(nMejoradoP_gt1, oMejoradoP_gt1)
 
-// Tamaño 2 (2^1)
-val (_, nMejoradoP2, oMejoradoP2) = secuenciaRandom(2)
+// Tamaño 2 (2^1). Umbral = Tamaño (Ej: Umbral = 2)
+val (_, nMejoradoP_eq1, oMejoradoP_eq1) = secuenciaRandom(2)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(1))(nMejoradoP2, oMejoradoP2)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(2))(nMejoradoP_eq1, oMejoradoP_eq1)
 
-// Tamaño 4 (2^2)
-val (_, nMejoradoP4, oMejoradoP4) = secuenciaRandom(4)
+// Tamaño 4 (2^2). Umbral > Tamaño (Ej: Umbral = 100)
+val (_, nMejoradoP_gt2, oMejoradoP_gt2) = secuenciaRandom(4)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(1))(nMejoradoP4, oMejoradoP4)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(100))(nMejoradoP_gt2, oMejoradoP_gt2)
 
-// Tamaño 8 (2^3)
-val (_, nMejoradoP8, oMejoradoP8) = secuenciaRandom(8)
+// Tamaño 8 (2^3). Umbral = Tamaño (Ej: Umbral = 8)
+val (_, nMejoradoP_eq2, oMejoradoP_eq2) = secuenciaRandom(8)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(2))(nMejoradoP8, oMejoradoP8)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(8))(nMejoradoP_eq2, oMejoradoP_eq2)
 
-// Tamaño 16 (2^4)
-val (_, nMejoradoP16, oMejoradoP16) = secuenciaRandom(16)
+// Tamaño 16 (2^4). Umbral < Tamaño (Ej: Umbral = 8)
+val (_, nMejoradoP_lt1, oMejoradoP_lt1) = secuenciaRandom(16)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(3))(nMejoradoP16, oMejoradoP16)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(8))(nMejoradoP_lt1, oMejoradoP_lt1)
 
-// Tamaño 32 (2^5)
-val (_, nMejoradoP32, oMejoradoP32) = secuenciaRandom(32)
+// Tamaño 32 (2^5). Umbral = Tamaño (Ej: Umbral = 32)
+val (_, nMejoradoP_eq3, oMejoradoP_eq3) = secuenciaRandom(32)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(4))(nMejoradoP32, oMejoradoP32)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(32))(nMejoradoP_eq3, oMejoradoP_eq3)
 
-// Tamaño 64 (2^6)
-val (_, nMejoradoP64, oMejoradoP64) = secuenciaRandom(64)
+// Tamaño 64 (2^6). Umbral < Tamaño (Ej: Umbral = 32)
+val (_, nMejoradoP_lt2, oMejoradoP_lt2) = secuenciaRandom(64)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(5))(nMejoradoP64, oMejoradoP64)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(32))(nMejoradoP_lt2, oMejoradoP_lt2)
 
-// Tamaño 128 (2^7)
-val (_, nMejoradoP128, oMejoradoP128) = secuenciaRandom(128)
+// Tamaño 128 (2^7). Umbral > Tamaño (Ej: Umbral = 2000)
+val (_, nMejoradoP_gt3, oMejoradoP_gt3) = secuenciaRandom(128)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(6))(nMejoradoP128, oMejoradoP128)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(2000))(nMejoradoP_gt3, oMejoradoP_gt3)
 
-// Tamaño 256 (2^8)
-val (_, nMejoradoP256, oMejoradoP256) = secuenciaRandom(256)
+// Tamaño 256 (2^8). Umbral < Tamaño (Ej: Umbral = 128)
+val (_, nMejoradoP_lt3, oMejoradoP_lt3) = secuenciaRandom(256)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(7))(nMejoradoP256, oMejoradoP256)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(128))(nMejoradoP_lt3, oMejoradoP_lt3)
 
-// Tamaño 512 (2^9)
-val (_, nMejoradoP512, oMejoradoP512) = secuenciaRandom(512)
+// Tamaño 512 (2^9). Umbral > Tamaño (Ej: Umbral = 4096)
+val (_, nMejoradoP_gt4, oMejoradoP_gt4) = secuenciaRandom(512)
 for {
   i <- 1 to 3
-} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(8))(nMejoradoP512, oMejoradoP512)
+} yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(4096))(nMejoradoP_gt4, oMejoradoP_gt4)
 
 
 
