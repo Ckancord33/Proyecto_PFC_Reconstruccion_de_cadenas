@@ -83,7 +83,7 @@ package object ReconstCadenas {
       }
     }
 
-    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
     iterarTamanos(1, inicial)
   }
 
@@ -115,7 +115,7 @@ package object ReconstCadenas {
       }
     }
 
-    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
     iterarTamanos(1, inicial)
   }
 
