@@ -114,3 +114,43 @@ assert(pertenece("ndo".toSeq, arbol10))
 assert(pertenece("o".toSeq, arbol10))
 assert(!pertenece("ho".toSeq, arbol10))
 assert(!pertenece("mun".toSeq, arbol10))
+
+val palabras = Seq(
+  Seq('a', 'c', 't'),
+  Seq('a', 'c'),
+  Seq('a', 'g', 'a'),
+  Seq('t', 'a', 'g'),
+  Seq('g', 't')
+)
+val trie = arbolDeSufijos(palabras)
+
+// Caso 1: Secuencia completa que está en el trie
+val p1 = Seq('a', 'c')
+pertenece(p1, trie) // true
+
+// Caso 2: Prefijo de una palabra que también es palabra válida
+val p2 = Seq('a', 'c', 't')
+pertenece(p2, trie) // true
+
+// Caso 3: Sufijo de una palabra, pero no palabra completa insertada
+val p3 = Seq('c', 't')
+pertenece(p3, trie) // false
+
+// Caso 4: Secuencia que no fue añadida ni como sufijo
+val p4 = Seq('g', 'a')
+pertenece(p4, trie) // false
+
+// Caso 5: Palabra de longitud 1 que sí aparece como inicio de palabra más larga
+val p5 = Seq('g')
+pertenece(p5, trie) // false (no está marcada como válida)
+
+val p6 = Seq('g', 't')
+pertenece(p6, trie) // true
+
+// Caso 6: Palabra que es un palíndromo presente
+val p7 = Seq('a', 'g', 'a')
+pertenece(p7, trie) // true
+
+// Caso 7: Secuencia vacía (debería ser false si no se marcó el nodo raíz)
+val p8 = Seq()
+pertenece(p8, trie) // false
