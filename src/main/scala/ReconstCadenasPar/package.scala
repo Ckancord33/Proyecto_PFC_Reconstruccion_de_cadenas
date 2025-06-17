@@ -37,42 +37,31 @@ package object ReconstCadenasPar {
   def reconstruirCadenaMejoradoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
     def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
-      if (k > n) Seq.empty // no encontrado (no debería pasar)
+      if (k == n) candidatos.headOption.getOrElse(Seq.empty)
       else {
-        // 1) Generar todas las extensiones
-        val ext: Seq[Seq[Char]] =
-          if (candidatos.size * alfabeto.size <= umbral) {
-            candidatos.flatMap(prefijo =>
-              alfabeto.map(c => prefijo :+ c)
-            )
-          } else {
-            // paralelismo de datos para conjuntos grandes
-            candidatos.par
-              .flatMap(prefijo => alfabeto.map(c => prefijo :+ c))
-              .toList
-          }
-
-        // 2) Filtrar con el oráculo
         val filtrados: Seq[Seq[Char]] =
-          if (ext.size <= umbral) {
-            ext.filter(o)
+          if (k <= umbral) {
+            candidatos.par.flatMap { prefijo =>
+              alfabeto.par.flatMap { c =>
+                val combinacion = prefijo :+ c
+                if (o(combinacion)) Seq(combinacion) else Nil
+              }
+            }.toList
           } else {
-            ext.par
-              .filter(o)
-              .toList
+            for {
+              prefijo <- candidatos
+              c <- alfabeto
+              combinacion = prefijo :+ c
+              if o(combinacion)
+            } yield combinacion
           }
 
-        // 3) Si alguno ya tiene longitud n, devolverlo
-        val completados = filtrados.filter(_.length == n)
-        if (completados.nonEmpty) completados.head
-        else
-          // 4) Continuar con la siguiente longitud
-          construirCandidatos(k + 1, filtrados)
+        construirCandidatos(k + 1, filtrados)
       }
     }
 
-    // inicio con SC₀ = Seq(Seq.empty)
-    construirCandidatos(1, Seq(Seq.empty))
+    construirCandidatos(0, Seq(Seq.empty))
+
   }
 
 def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
@@ -113,7 +102,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 }
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
-    
+
     require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
