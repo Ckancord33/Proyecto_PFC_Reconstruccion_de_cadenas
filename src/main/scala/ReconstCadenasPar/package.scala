@@ -107,16 +107,17 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
     def filtrar(sc: Seq[Seq[Char]], k: Int): Seq[Seq[Char]] = {
       if (k <= umbral) {
-        sc.par.flatMap { s1 =>
-          sc.par.flatMap { s2 =>
-            val combinacion = s1 ++ s2
-            val todasSubcadenasPresentes = (0 to k).forall { i =>
-              val sub = combinacion.slice(i, i + k)
-              sc.contains(sub)
-            }
-            if (todasSubcadenasPresentes) Seq(combinacion) else Nil
+        val parSc = sc.par
+        (for {
+          s1 <- parSc
+          s2 <- parSc
+          combinacion = s1 ++ s2
+          if (0 to k).forall { i =>
+            val sub = combinacion.slice(i, i + k)
+            sc.contains(sub)
           }
-        }.toList
+          if o(combinacion)
+        } yield combinacion).seq
       } else {
         for {
           s1 <- sc
@@ -126,28 +127,21 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
             val sub = combinacion.slice(i, i + k)
             sc.contains(sub)
           }
+          if o(combinacion)
         } yield combinacion
       }
     }
 
-    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] =
+    def iterarTamanos(k: Int, sc: Seq[Seq[Char]]): Seq[Char] = {
       if (k == n) sc.headOption.getOrElse(Seq.empty)
       else {
-        val candidatos = filtrar(sc, k)
-
-        val validas =
-          if (k <= umbral) candidatos.par.filter(o).toList
-          else candidatos.filter(o)
-
+        val validas = filtrar(sc, k)
         iterarTamanos(k * 2, validas)
       }
+    }
 
-    val inicial =
-      if (1 <= umbral) alfabeto.par.map(c => Seq(c)).toList
-      else alfabeto.map(c => Seq(c))
-
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
     iterarTamanos(1, inicial)
-
   }
 
   def reconstruirCadenaTurboAceleradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
@@ -190,7 +184,7 @@ def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
       }
     }
 
-    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
+    val inicial: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
     iterarTamanos(1, inicial)
   }
 }
