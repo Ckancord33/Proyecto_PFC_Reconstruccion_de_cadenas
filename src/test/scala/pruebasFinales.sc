@@ -71,6 +71,71 @@ val (secuenciaIngenuo2, nIngenuo2, oIngenuo2) = secuenciaRandom(12)
 measure { reconstruirCadenaIngenuoPar(4)(nIngenuo2, oIngenuo2) }
 
 /**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION MEJORADO
+ */
+
+// Caso 1: cadena vacía (2^0 = 0)
+val secM1 = Seq[Char]()
+val orM1 = crearOraculo(1)(secM1)
+reconstruirCadenaMejorado(secM1.length, orM1) == secM1
+reconstruirCadenaMejoradoPar(0)(secM1.length, orM1) == secM1
+
+
+// Caso 2: longitud 1 (2^0 = 1)
+val secM2 = Seq('a')
+val orM2 = crearOraculo(1)(secM2)
+reconstruirCadenaMejorado(secM2.length, orM2) == secM2
+reconstruirCadenaMejoradoPar(0)(secM2.length, orM2) == secM2
+
+
+// Caso 3: longitud 2 (2^1)
+val secM3 = Seq('c', 'g')
+val orM3 = crearOraculo(1)(secM3)
+reconstruirCadenaMejorado(secM3.length, orM3) == secM3
+reconstruirCadenaMejoradoPar(1)(secM3.length, orM3) == secM3
+
+
+// Caso 4: longitud 25 (2^4 < 25 < 2^5)
+val secM4 = Seq('c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'a', 'g', 'c', 't', 'g', 'a', 't', 'c', 'g', 't')
+val orM4 = crearOraculo(1)(secM4)
+reconstruirCadenaMejorado(secM4.length, orM4) == secM4
+reconstruirCadenaMejoradoPar(1)(secM4.length, orM4) == secM4
+
+
+
+// Caso 5: longitud 8 (2^3)
+val secM5 = Seq('a', 'c', 'g', 't', 'a', 'c', 'g', 't')
+val orM5 = crearOraculo(1)(secM5)
+reconstruirCadenaMejorado(secM5.length, orM5) == secM5
+reconstruirCadenaMejoradoPar(2)(secM5.length, orM5) == secM5
+
+
+// Caso 6: longitud 16 (2^4)
+val secM6 = Seq('a', 'c', 'g', 't', 'c', 'a', 'g', 't', 'g', 't', 'c', 'a', 't', 'g', 'a', 'c')
+val orM6 = crearOraculo(1)(secM6)
+reconstruirCadenaMejorado(secM6.length, orM6) == secM6
+reconstruirCadenaMejoradoPar(3)(secM6.length, orM6) == secM6
+
+
+// Caso 7: longitud 32 (2^5)
+val secM7 = Seq('c', 't', 'a', 'g', 't', 'g', 'c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'g', 'a')
+val orM7 = crearOraculo(1)(secM7)
+reconstruirCadenaMejorado(secM7.length, orM7) == secM7
+reconstruirCadenaMejoradoPar(4)(secM7.length, orM7) == secM7
+
+
+// Caso 8: longitud 128 (2^7)
+val secM8 = Seq('a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t')
+val orM8 = crearOraculo(1)(secM8)
+reconstruirCadenaMejorado(secM8.length, orM8) == secM8
+reconstruirCadenaMejoradoPar(6)(secM8.length, orM8) == secM8
+
+//Rendimiento de la funcion mejorada
+val (secMRend, nMRend, oMRend) = secuenciaRandom(1024)
+measure { reconstruirCadenaMejorado(nMRend, oMRend) }
+measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
+
+/**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBOMEJORADA
  */
 
@@ -291,8 +356,6 @@ for {
   (sec, n, or) = secuenciaRandom(Math.pow(2, i).toInt)
 } yield reconstruirCadenaTurboAcelerada(n, or) == sec
 
-
-
 /**
  * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION INGENUA
  */
@@ -314,72 +377,6 @@ val (_, nIngenuop8, oIngenuop8) = secuenciaRandom(8)
 for {
   i <- 1 to 3
 } yield compararAlgoritmos(reconstruirCadenaIngenuo, reconstruirCadenaIngenuoPar(3))(nIngenuop8, oIngenuop8)
-
-
-/**
- * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION MEJORADO
- */
-
-// Caso 1: cadena vacía (2^0 = 0)
-val secM1 = Seq[Char]()
-val orM1 = crearOraculo(1)(secM1)
-reconstruirCadenaMejorado(secM1.length, orM1) == secM1
-reconstruirCadenaMejoradoPar(0)(secM1.length, orM1) == secM1
-
-
-// Caso 2: longitud 1 (2^0 = 1)
-val secM2 = Seq('a')
-val orM2 = crearOraculo(1)(secM2)
-reconstruirCadenaMejorado(secM2.length, orM2) == secM2
-reconstruirCadenaMejoradoPar(0)(secM2.length, orM2) == secM2
-
-
-// Caso 3: longitud 2 (2^1)
-val secM3 = Seq('c', 'g')
-val orM3 = crearOraculo(1)(secM3)
-reconstruirCadenaMejorado(secM3.length, orM3) == secM3
-reconstruirCadenaMejoradoPar(1)(secM3.length, orM3) == secM3
-
-
-// Caso 4: longitud 25 (2^4 < 25 < 2^5)
-val secM4 = Seq('c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'a', 'g', 'c', 't', 'g', 'a', 't', 'c', 'g', 't')
-val orM4 = crearOraculo(1)(secM4)
-reconstruirCadenaMejorado(secM4.length, orM4) == secM4
-reconstruirCadenaMejoradoPar(1)(secM4.length, orM4) == secM4
-
-
-
-// Caso 5: longitud 8 (2^3)
-val secM5 = Seq('a', 'c', 'g', 't', 'a', 'c', 'g', 't')
-val orM5 = crearOraculo(1)(secM5)
-reconstruirCadenaMejorado(secM5.length, orM5) == secM5
-reconstruirCadenaMejoradoPar(2)(secM5.length, orM5) == secM5
-
-
-// Caso 6: longitud 16 (2^4)
-val secM6 = Seq('a', 'c', 'g', 't', 'c', 'a', 'g', 't', 'g', 't', 'c', 'a', 't', 'g', 'a', 'c')
-val orM6 = crearOraculo(1)(secM6)
-reconstruirCadenaMejorado(secM6.length, orM6) == secM6
-reconstruirCadenaMejoradoPar(3)(secM6.length, orM6) == secM6
-
-
-// Caso 7: longitud 32 (2^5)
-val secM7 = Seq('c', 't', 'a', 'g', 't', 'g', 'c', 't', 'a', 'g', 't', 'g', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 't', 't', 'c', 't', 'a', 't', 'a', 'c', 'c', 'g', 'a')
-val orM7 = crearOraculo(1)(secM7)
-reconstruirCadenaMejorado(secM7.length, orM7) == secM7
-reconstruirCadenaMejoradoPar(4)(secM7.length, orM7) == secM7
-
-
-// Caso 8: longitud 128 (2^7)
-val secM8 = Seq('a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t','a','c','g','t')
-val orM8 = crearOraculo(1)(secM8)
-reconstruirCadenaMejorado(secM8.length, orM8) == secM8
-reconstruirCadenaMejoradoPar(6)(secM8.length, orM8) == secM8
-
-//Rendimiento de la funcion mejorada
-val (secMRend, nMRend, oMRend) = secuenciaRandom(1024)
-measure { reconstruirCadenaMejorado(nMRend, oMRend) }
-measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
 
 /**
  * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION SOLUCION MEJORADA
@@ -445,19 +442,155 @@ for {
   i <- 1 to 3
 } yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(4096))(nMejoradoP_gt4, oMejoradoP_gt4)
 
-
-
 /**
- * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION TURBO
+ * IMPACTO DE TÉCNICAS DE PARALELIZACIÓN PARA LA VERSIÓN TURBOMEJORADA
  */
 
+// Tamaño 1 (2^0). Umbral = 0
+val (_, nTurboP_1, oTurboP_1) = secuenciaRandom(1)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_1 / 2))(nTurboP_1, oTurboP_1)
+
+// Tamaño 2 (2^1). Umbral = 1
+val (_, nTurboP_2, oTurboP_2) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_2 / 2))(nTurboP_2, oTurboP_2)
+
+// Tamaño 4 (2^2). Umbral = 2
+val (_, nTurboP_4, oTurboP_4) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_4 / 2))(nTurboP_4, oTurboP_4)
+
+// Tamaño 8 (2^3). Umbral = 4
+val (_, nTurboP_8, oTurboP_8) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_8 / 2))(nTurboP_8, oTurboP_8)
+
+// Tamaño 16 (2^4). Umbral = 8
+val (_, nTurboP_16, oTurboP_16) = secuenciaRandom(16)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_16 / 2))(nTurboP_16, oTurboP_16)
+
+// Tamaño 32 (2^5). Umbral = 16
+val (_, nTurboP_32, oTurboP_32) = secuenciaRandom(32)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_32 / 2))(nTurboP_32, oTurboP_32)
+
+// Tamaño 64 (2^6). Umbral = 32
+val (_, nTurboP_64, oTurboP_64) = secuenciaRandom(64)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_64 / 2))(nTurboP_64, oTurboP_64)
+
+// Tamaño 128 (2^7). Umbral = 64
+val (_, nTurboP_128, oTurboP_128) = secuenciaRandom(128)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_128 / 2))(nTurboP_128, oTurboP_128)
+
+// Tamaño 256 (2^8). Umbral = 128
+val (_, nTurboP_256, oTurboP_256) = secuenciaRandom(256)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_256 / 2))(nTurboP_256, oTurboP_256)
+
+// Tamaño 512 (2^9). Umbral = 256
+val (_, nTurboP_512, oTurboP_512) = secuenciaRandom(512)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_512 / 2))(nTurboP_512, oTurboP_512)
+
+// Tamaño 1024 (2^10). Umbral = 512
+val (_, nTurboP_1024, oTurboP_1024) = secuenciaRandom(1024)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_1024 / 2))(nTurboP_1024, oTurboP_1024)
+
+// Tamaño 2048 (2^11). Umbral = 1024
+val (_, nTurboP_2048, oTurboP_2048) = secuenciaRandom(2048)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboMejorada, reconstruirCadenaTurboMejoradaPar(nTurboP_2048 / 2))(nTurboP_2048, oTurboP_2048)
+
 /**
- * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO MEJORADA
+ * IMPACTO DE TÉCNICAS DE PARALELIZACIÓN PARA LA VERSIÓN TURBOACELERADA
  */
 
+// Tamaño 1 (2^0). Umbral = 0
+val (_, nTA_1, oTA_1) = secuenciaRandom(1)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_1 / 2))(nTA_1, oTA_1)
 
-/**
- * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBO ACELERADA
- */
+// Tamaño 2 (2^1). Umbral = 1
+val (_, nTA_2, oTA_2) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_2 / 2))(nTA_2, oTA_2)
 
+// Tamaño 4 (2^2). Umbral = 2
+val (_, nTA_4, oTA_4) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_4 / 2))(nTA_4, oTA_4)
+
+// Tamaño 8 (2^3). Umbral = 4
+val (_, nTA_8, oTA_8) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_8 / 2))(nTA_8, oTA_8)
+
+// Tamaño 16 (2^4). Umbral = 8
+val (_, nTA_16, oTA_16) = secuenciaRandom(16)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_16 / 2))(nTA_16, oTA_16)
+
+// Tamaño 32 (2^5). Umbral = 16
+val (_, nTA_32, oTA_32) = secuenciaRandom(32)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_32 / 2))(nTA_32, oTA_32)
+
+// Tamaño 64 (2^6). Umbral = 32
+val (_, nTA_64, oTA_64) = secuenciaRandom(64)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_64 / 2))(nTA_64, oTA_64)
+
+// Tamaño 128 (2^7). Umbral = 64
+val (_, nTA_128, oTA_128) = secuenciaRandom(128)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_128 / 2))(nTA_128, oTA_128)
+
+// Tamaño 256 (2^8). Umbral = 128
+val (_, nTA_256, oTA_256) = secuenciaRandom(256)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_256 / 2))(nTA_256, oTA_256)
+
+// Tamaño 512 (2^9). Umbral = 256
+val (_, nTA_512, oTA_512) = secuenciaRandom(512)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_512 / 2))(nTA_512, oTA_512)
+
+// Tamaño 1024 (2^10). Umbral = 512
+val (_, nTA_1024, oTA_1024) = secuenciaRandom(1024)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_1024 / 2))(nTA_1024, oTA_1024)
+
+// Tamaño 2048 (2^11). Umbral = 1024
+val (_, nTA_2048, oTA_2048) = secuenciaRandom(2048)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurboAcelerada, reconstruirCadenaTurboAceleradaPar(nTA_2048 / 2))(nTA_2048, oTA_2048)
 
