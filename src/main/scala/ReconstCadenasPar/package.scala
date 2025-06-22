@@ -67,39 +67,34 @@ package object ReconstCadenasPar {
 def reconstruirCadenaTurboPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
   require((n & (n - 1)) == 0 && n > 0, "La longitud debe ser potencia de dos")
 
-  def construirCandidatos(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
+  def iterar(k: Int, candidatos: Seq[Seq[Char]]): Seq[Char] = {
     if (k == n) candidatos.headOption.getOrElse(Seq())
     else {
-      // Decidir si paralelizar basado en el umbral
-      val combinaciones = if (k <= umbral) {
+      val validas = if (k <= umbral) {
         val parCandidatos = candidatos.par
-        parCandidatos.flatMap { s1 =>
-          parCandidatos.map {
-            s2 => s1 ++ s2
-          }
-        }.seq
-      } else {
-        candidatos.flatMap { s1 =>
-          candidatos.collect {
-            s2 => s1 ++ s2
-          }
-        }
+        (for {
+          s1 <- parCandidatos
+          s2 <- parCandidatos
+          combinacion = s1 ++ s2
+          if (o(combinacion))
+        } yield combinacion).seq
       }
-
-      // Filtrado paralelo para grandes conjuntos
-      val validas = if (k * 2 <= umbral) {
-        combinaciones.par.filter(o).seq
-      } else {
-        combinaciones.filter(o)
+      else {
+        for {
+          s1 <- candidatos
+          s2 <- candidatos
+          combinacion = s1 ++ s2
+          if (o(combinacion))
+        } yield combinacion
       }
-
-      // Verificación paralela de existencia
-      construirCandidatos(k*2, validas)
+      iterar(k * 2, validas)
     }
   }
-  val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c))
-  construirCandidatos(1, iniciales)
+
+  val iniciales: Seq[Seq[Char]] = alfabeto.map(c => Seq(c)).filter(o)
+  iterar(1, iniciales)
 }
+
 
   def reconstruirCadenaTurboMejoradaPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
 
