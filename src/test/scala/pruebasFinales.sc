@@ -229,12 +229,56 @@ for {
 
 
 
-//FALTAN CASOS DE PRUEBA
+// Caso 1: cadena vacía
+val secTurboDef1 = Seq[Char]()
+val orTurboDef1 = crearOraculo(1)(secTurboDef1)
+reconstruirCadenaTurbo(secTurboDef1.length, orTurboDef1) == secTurboDef1
+reconstruirCadenaTurboPar(1)(secTurboDef1.length, orTurboDef1) == secTurboDef1 // Umbral = 2^0 = 1
+
+// Caso 2: longitud 1 (2^0 = 1)
+val secTurboDef2 = Seq('t')
+val orTurboDef2 = crearOraculo(1)(secTurboDef2)
+reconstruirCadenaTurbo(secTurboDef2.length, orTurboDef2) == secTurboDef2
+reconstruirCadenaTurboPar(2)(secTurboDef2.length, orTurboDef2) == secTurboDef2 // Umbral = 2^1 = 2
+
+// Caso 3: longitud 2 (2^1)
+val secTurboDef3 = Seq('a', 't')
+val orTurboDef3 = crearOraculo(1)(secTurboDef3)
+reconstruirCadenaTurbo(secTurboDef3.length, orTurboDef3) == secTurboDef3
+reconstruirCadenaTurboPar(2)(secTurboDef3.length, orTurboDef3) == secTurboDef3 // Umbral = 2^1 = 2
+
+// Caso 4: longitud 4 (2^2)
+val secTurboDef4 = Seq('c', 'a', 'c', 'g')
+val orTurboDef4 = crearOraculo(1)(secTurboDef4)
+reconstruirCadenaTurbo(secTurboDef4.length, orTurboDef4) == secTurboDef4
+reconstruirCadenaTurboPar(2)(secTurboDef4.length, orTurboDef4) == secTurboDef4 // Umbral = 2^1 = 2
+
+// Caso 5: longitud 8 (2^3)
+val secTurboDef5 = Seq('g', 't', 'a', 'c', 'g', 't', 'a', 'c')
+val orTurboDef5 = crearOraculo(1)(secTurboDef5)
+reconstruirCadenaTurbo(secTurboDef5.length, orTurboDef5) == secTurboDef5
+reconstruirCadenaTurboPar(8)(secTurboDef5.length, orTurboDef5) == secTurboDef5 // Umbral = 2^3 = 8
+
+// Caso 6: longitud 16 (2^4)
+val secTurboDef6 = Seq('t', 'c', 'a', 'g', 't', 'c', 'a', 'g', 'a', 'g', 'c', 't', 'g', 'a', 't', 'c')
+val orTurboDef6 = crearOraculo(1)(secTurboDef6)
+reconstruirCadenaTurbo(secTurboDef6.length, orTurboDef6) == secTurboDef6
+reconstruirCadenaTurboPar(4)(secTurboDef6.length, orTurboDef6) == secTurboDef6 // Umbral = 2^2 = 4
+
+// Caso 7: longitud 32 (2^5)
+val secTurboDef7 = Seq('a', 'a', 'c', 'c', 'g', 'g', 't', 't', 'a', 'a', 'c', 'c', 'g', 'g', 't', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't')
+val orTurboDef7 = crearOraculo(1)(secTurboDef7)
+reconstruirCadenaTurbo(secTurboDef7.length, orTurboDef7) == secTurboDef7
+reconstruirCadenaTurboPar(64)(secTurboDef7.length, orTurboDef7) == secTurboDef7 // Umbral = 2^6 = 64
+
+// Caso 8: longitud 128 (2^7)
+val secTurboDef8 = Seq('g','t','a','g','g','a','g','a','g','a','g','g','t','c','a','g','c','g','c','g','g','a','t','t','t','a','a','a','t','a','a','c','g','t','g','c','a','g','g','c','t','t','t','t','c','g','a','t','t','a','t','t','t','c','g','g','c','c','t','c','c','a','c','t','g','t','c','t','c','t','t','c','g','g','t','c','a','t','t','t','a','t','g','a','c','c','g','g','g','c','t','a','c','t','c','g','t','a','c','g','a','t','c','g','c','g','a','t','t','c','g','g','a','c','g','c','t','t','g','g','c','c','g','a','c','t','a','a')
+val orTurboDef8 = crearOraculo(1)(secTurboDef8)
+reconstruirCadenaTurbo(secTurboDef8.length, orTurboDef8) == secTurboDef8
+reconstruirCadenaTurboPar(128)(secTurboDef8.length, orTurboDef8) == secTurboDef8 // Umbral = 2^7 = 128
 
 
-
-
-//Rendimiento de la funcion solucion turbo
+//Rendimiento secuencial de la funcion solucion turbo
 
 // Caso 10: Longitud 2^9 = 512
 val (secTRend10, nTRend10, oTRend10) = secuenciaRandom(512)
