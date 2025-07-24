@@ -136,6 +136,65 @@ measure { reconstruirCadenaMejorado(nMRend, oMRend) }
 measure { reconstruirCadenaMejoradoPar(9)(nMRend, oMRend) }
 
 /**
+ * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION SOLUCION TURBO
+ */
+
+// Caso 1: cadena vacía
+val secTurboDef1 = Seq[Char]()
+val orTurboDef1 = crearOraculo(1)(secTurboDef1)
+reconstruirCadenaTurbo(secTurboDef1.length, orTurboDef1) == secTurboDef1
+reconstruirCadenaTurboPar(1)(secTurboDef1.length, orTurboDef1) == secTurboDef1 // Umbral = 2^0 = 1
+
+// Caso 2: longitud 1 (2^0 = 1)
+val secTurboDef2 = Seq('t')
+val orTurboDef2 = crearOraculo(1)(secTurboDef2)
+reconstruirCadenaTurbo(secTurboDef2.length, orTurboDef2) == secTurboDef2
+reconstruirCadenaTurboPar(2)(secTurboDef2.length, orTurboDef2) == secTurboDef2 // Umbral = 2^1 = 2
+
+// Caso 3: longitud 2 (2^1)
+val secTurboDef3 = Seq('a', 't')
+val orTurboDef3 = crearOraculo(1)(secTurboDef3)
+reconstruirCadenaTurbo(secTurboDef3.length, orTurboDef3) == secTurboDef3
+reconstruirCadenaTurboPar(2)(secTurboDef3.length, orTurboDef3) == secTurboDef3 // Umbral = 2^1 = 2
+
+// Caso 4: longitud 4 (2^2)
+val secTurboDef4 = Seq('c', 'a', 'c', 'g')
+val orTurboDef4 = crearOraculo(1)(secTurboDef4)
+reconstruirCadenaTurbo(secTurboDef4.length, orTurboDef4) == secTurboDef4
+reconstruirCadenaTurboPar(2)(secTurboDef4.length, orTurboDef4) == secTurboDef4 // Umbral = 2^1 = 2
+
+// Caso 5: longitud 8 (2^3)
+val secTurboDef5 = Seq('g', 't', 'a', 'c', 'g', 't', 'a', 'c')
+val orTurboDef5 = crearOraculo(1)(secTurboDef5)
+reconstruirCadenaTurbo(secTurboDef5.length, orTurboDef5) == secTurboDef5
+reconstruirCadenaTurboPar(8)(secTurboDef5.length, orTurboDef5) == secTurboDef5 // Umbral = 2^3 = 8
+
+// Caso 6: longitud 16 (2^4)
+val secTurboDef6 = Seq('t', 'c', 'a', 'g', 't', 'c', 'a', 'g', 'a', 'g', 'c', 't', 'g', 'a', 't', 'c')
+val orTurboDef6 = crearOraculo(1)(secTurboDef6)
+reconstruirCadenaTurbo(secTurboDef6.length, orTurboDef6) == secTurboDef6
+reconstruirCadenaTurboPar(4)(secTurboDef6.length, orTurboDef6) == secTurboDef6 // Umbral = 2^2 = 4
+
+// Caso 7: longitud 32 (2^5)
+val secTurboDef7 = Seq('a', 'a', 'c', 'c', 'g', 'g', 't', 't', 'a', 'a', 'c', 'c', 'g', 'g', 't', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't')
+val orTurboDef7 = crearOraculo(1)(secTurboDef7)
+reconstruirCadenaTurbo(secTurboDef7.length, orTurboDef7) == secTurboDef7
+reconstruirCadenaTurboPar(64)(secTurboDef7.length, orTurboDef7) == secTurboDef7 // Umbral = 2^6 = 64
+
+// Caso 8: longitud 128 (2^7)
+val secTurboDef8 = Seq('g','t','a','g','g','a','g','a','g','a','g','g','t','c','a','g','c','g','c','g','g','a','t','t','t','a','a','a','t','a','a','c','g','t','g','c','a','g','g','c','t','t','t','t','c','g','a','t','t','a','t','t','t','c','g','g','c','c','t','c','c','a','c','t','g','t','c','t','c','t','t','c','g','g','t','c','a','t','t','t','a','t','g','a','c','c','g','g','g','c','t','a','c','t','c','g','t','a','c','g','a','t','c','g','c','g','a','t','t','c','g','g','a','c','g','c','t','t','g','g','c','c','g','a','c','t','a','a')
+val orTurboDef8 = crearOraculo(1)(secTurboDef8)
+reconstruirCadenaTurbo(secTurboDef8.length, orTurboDef8) == secTurboDef8
+reconstruirCadenaTurboPar(128)(secTurboDef8.length, orTurboDef8) == secTurboDef8 // Umbral = 2^7 = 128
+
+
+//Rendimiento secuencial de la funcion solucion turbo
+
+// Caso 10: Longitud 2^9 = 512
+val (secTRend10, nTRend10, oTRend10) = secuenciaRandom(512)
+measure { reconstruirCadenaTurbo(nTRend10, oTRend10) }
+
+/**
  * CASOS DE PRUEBA Y DE RENDIMIENTO DE LA FUNCION TURBOMEJORADA
  */
 
@@ -441,6 +500,77 @@ val (_, nMejoradoP_gt4, oMejoradoP_gt4) = secuenciaRandom(512)
 for {
   i <- 1 to 3
 } yield compararAlgoritmos(reconstruirCadenaMejorado, reconstruirCadenaMejoradoPar(4096))(nMejoradoP_gt4, oMejoradoP_gt4)
+
+/**
+ * IMPACTO DE TECNICAS DE PARALELIZACION PARA LA VERSION SOLUCION TURBO
+ */
+
+// Tamaño 1 (2^0). Umbral > Tamaño (Ej: Umbral = 2^1 = 2)
+val (_, nTurboP_gt1, oTurboP_gt1) = secuenciaRandom(1)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(2))(nTurboP_gt1, oTurboP_gt1)
+
+// Tamaño 2 (2^1). Umbral = Tamaño (Ej: Umbral = 2^1 = 2)
+val (_, nTurboP_eq1, oTurboP_eq1) = secuenciaRandom(2)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(2))(nTurboP_eq1, oTurboP_eq1)
+
+// Tamaño 4 (2^2). Umbral > Tamaño (Ej: Umbral = 2^4 = 16)
+val (_, nTurboP_gt2, oTurboP_gt2) = secuenciaRandom(4)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(16))(nTurboP_gt2, oTurboP_gt2)
+
+// Tamaño 8 (2^3). Umbral = Tamaño (Ej: Umbral = 2^3 = 8)
+val (_, nTurboP_eq2, oTurboP_eq2) = secuenciaRandom(8)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(8))(nTurboP_eq2, oTurboP_eq2)
+
+// Tamaño 16 (2^4). Umbral < Tamaño (Ej: Umbral = 2^2 = 4)
+val (_, nTurboP_lt1, oTurboP_lt1) = secuenciaRandom(16)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(4))(nTurboP_lt1, oTurboP_lt1)
+
+// Tamaño 32 (2^5). Umbral = Tamaño (Ej: Umbral = 2^5 = 32)
+val (_, nTurboP_eq3, oTurboP_eq3) = secuenciaRandom(32)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(32))(nTurboP_eq3, oTurboP_eq3)
+
+// Tamaño 64 (2^6). Umbral < Tamaño (Ej: Umbral = 2^3 = 8)
+val (_, nTurboP_lt2, oTurboP_lt2) = secuenciaRandom(64)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(8))(nTurboP_lt2, oTurboP_lt2)
+
+// Tamaño 128 (2^7). Umbral > Tamaño (Ej: Umbral = 2^9 = 512)
+val (_, nTurboP_gt3, oTurboP_gt3) = secuenciaRandom(128)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(512))(nTurboP_gt3, oTurboP_gt3)
+
+// Tamaño 256 (2^8). Umbral < Tamaño (Ej: Umbral = 2^7 = 128)
+val (_, nTurboP_lt3, oTurboP_lt3) = secuenciaRandom(256)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(128))(nTurboP_lt3, oTurboP_lt3)
+
+// Tamaño 512 (2^9). Umbral > Tamaño (Ej: Umbral = 2^12 = 4096)
+val (_, nTurboP_gt4, oTurboP_gt4) = secuenciaRandom(512)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(4096))(nTurboP_gt4, oTurboP_gt4)
+
+// Tamaño 1024 (2^10). Umbral < Tamaño (Ej: Umbral = 2^9 = 512)
+val (_, nTurboP_lt4, oTurboP_lt4) = secuenciaRandom(1024)
+for {
+  i <- 1 to 3
+} yield compararAlgoritmos(reconstruirCadenaTurbo, reconstruirCadenaTurboPar(512))(nTurboP_lt4, oTurboP_lt4)
+
 
 /**
  * IMPACTO DE TÉCNICAS DE PARALELIZACIÓN PARA LA VERSIÓN TURBOMEJORADA
