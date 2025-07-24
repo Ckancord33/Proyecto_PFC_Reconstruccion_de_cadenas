@@ -1,11 +1,8 @@
 import common.*
 import java.util.concurrent._
-import scala.util.DynamicVariable
 import scala.collection.parallel.CollectionConverters._
 import Oraculo.*
 import ArbolSufijos.*
-import scala.collection.parallel.ParSeq
-import scala.collection.parallel.ParSeq
 package object ReconstCadenasPar {
   
   def reconstruirCadenaIngenuoPar(umbral: Int)(n: Int, o: Oraculo): Seq[Char] = {
